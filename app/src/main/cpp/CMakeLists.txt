@@ -25,8 +25,14 @@ else()
     add_compile_definitions(NDEBUG)
 endif()
 
+# Android compatibility layer (replaces SDL2 dependencies)
+add_compile_definitions(
+    SDL_stdinc_h_=1
+)
+
 # Include directories
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${XRAY_SRC}
     ${XRAY_SRC}/xrCore
     ${XRAY_SRC}/xrEngine
