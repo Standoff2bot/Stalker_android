@@ -8,47 +8,53 @@
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
-// Forward declarations of OpenXRay engine functions
+// Forward declarations from android_main.cpp
 extern "C" {
-    int xrEngine_Initialize(const char* fs_root, const char* fs_fname);
-    void xrEngine_Destroy();
-    void xrEngine_OnFrame();
-    void xrEngine_SetViewport(int width, int height);
-    void xrEngine_Pause();
-    void xrEngine_Resume();
+    int android_xray_init(const char* dataPath, const char* externalStoragePath);
+    void android_xray_destroy();
+    void android_xray_set_viewport(int width, int height);
+    void android_xray_on_frame();
+    void android_xray_pause();
+    void android_xray_resume();
 }
 
-static std::string g_dataPath;
+static std::string g_internalDataPath;
+static std::string g_externalStoragePath;
 static bool g_initialized = false;
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_openxray_stalker_MainActivity_nativeInit(JNIEnv* env, jclass, jstring dataPath) {
-    const char* path = env->GetStringUTFChars(dataPath, nullptr);
-    g_dataPath = path;
-    env->ReleaseStringUTFChars(dataPath, path);
+Java_com_openxray_stalker_MainActivity_nativeInit(JNIEnv* env, jclass, jstring internalPath, jstring externalPath) {
+    const char* internal = env->GetStringUTFChars(internalPath, nullptr);
+    const char* external = env->GetStringUTFChars(externalPath, nullptr);
     
-    LOGI("Native init with data path: %s", g_dataPath.c_str());
+    g_internalDataPath = internal;
+    g_externalStoragePath = external;
+    
+    env->ReleaseStringUTFChars(internalPath, internal);
+    env->ReleaseStringUTFChars(externalPath, external);
+    
+    LOGI("Native init:");
+    LOGI("  Internal: %s", g_internalDataPath.c_str());
+    LOGI("  External: %s", g_externalStoragePath.c_str());
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_openxray_stalker_MainActivity_nativeSurfaceCreated(JNIEnv*, jclass) {
-    LOGI("Surface created");
+    LOGI("=== Surface Created ===");
     
     if (!g_initialized) {
-        // Initialize OpenXRay engine
-        std::string fs_root = g_dataPath + "/";
-        std::string fs_fname = g_dataPath + "/fsgame.ltx";
-        
         LOGI("Initializing OpenXRay engine...");
-        LOGI("FS root: %s", fs_root.c_str());
-        LOGI("FS config: %s", fs_fname.c_str());
         
-        int result = xrEngine_Initialize(fs_root.c_str(), fs_fname.c_str());
+        int result = android_xray_init(
+            g_internalDataPath.c_str(),
+            g_externalStoragePath.c_str()
+        );
+        
         if (result == 0) {
             g_initialized = true;
-            LOGI("OpenXRay engine initialized successfully");
+            LOGI("✓ OpenXRay engine initialized successfully");
         } else {
-            LOGE("Failed to initialize OpenXRay engine: %d", result);
+            LOGE("✗ Failed to initialize OpenXRay engine: error %d", result);
         }
     }
 }
@@ -58,7 +64,7 @@ Java_com_openxray_stalker_MainActivity_nativeSurfaceChanged(JNIEnv*, jclass, jin
     LOGI("Surface changed: %dx%d", width, height);
     
     if (g_initialized) {
-        xrEngine_SetViewport(width, height);
+        android_xray_set_viewport(width, height);
     }
     
     glViewport(0, 0, width, height);
@@ -66,36 +72,30 @@ Java_com_openxray_stalker_MainActivity_nativeSurfaceChanged(JNIEnv*, jclass, jin
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_openxray_stalker_MainActivity_nativeDrawFrame(JNIEnv*, jclass) {
-    if (g_initialized) {
-        xrEngine_OnFrame();
-    } else {
-        // Draw black screen while not initialized
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
+    android_xray_on_frame();
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_openxray_stalker_MainActivity_nativePause(JNIEnv*, jclass) {
-    LOGI("Pause");
+    LOGI("=== Application Paused ===");
     if (g_initialized) {
-        xrEngine_Pause();
+        android_xray_pause();
     }
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_openxray_stalker_MainActivity_nativeResume(JNIEnv*, jclass) {
-    LOGI("Resume");
+    LOGI("=== Application Resumed ===");
     if (g_initialized) {
-        xrEngine_Resume();
+        android_xray_resume();
     }
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_openxray_stalker_MainActivity_nativeDestroy(JNIEnv*, jclass) {
-    LOGI("Destroy");
+    LOGI("=== Application Destroyed ===");
     if (g_initialized) {
-        xrEngine_Destroy();
+        android_xray_destroy();
         g_initialized = false;
     }
 }

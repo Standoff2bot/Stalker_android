@@ -1,0 +1,4 @@
+[submodule "xray-16"]
+	path = xray-16
+	url = https://github.com/OpenXRay/xray-16.git
+	branch = xd_dev
