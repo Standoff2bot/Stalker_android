@@ -7,6 +7,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # OpenXRay source root
 set(XRAY_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../xray-16/src)
+set(XRAY_EXTERNALS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../xray-16/Externals)
 
 # Platform defines
 add_compile_definitions(
@@ -16,6 +17,13 @@ add_compile_definitions(
     XR_PLATFORM_LINUX
     XRAY_STATIC_BUILD
 )
+
+# Build configuration (needed for Platform.hpp line 108 check)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(DEBUG)
+else()
+    add_compile_definitions(NDEBUG)
+endif()
 
 # Include directories
 include_directories(
@@ -34,6 +42,7 @@ include_directories(
     ${XRAY_SRC}/Layers
     ${XRAY_SRC}/Common
     ${XRAY_SRC}/Include
+    ${XRAY_EXTERNALS}/tracy/public
 )
 
 # Find Android libraries
@@ -48,10 +57,12 @@ file(GLOB_RECURSE XRCORE_SOURCES
     ${XRAY_SRC}/xrCommon/*.cpp
 )
 
-# Exclude Windows-specific files
+# Exclude Windows-specific and editor-only files
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*_win32.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*Windows.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*dx.*")
+list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*Editor.*")
+list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*BoneEditor.*")
 
 add_library(xrCore STATIC ${XRCORE_SOURCES})
 target_compile_options(xrCore PRIVATE
