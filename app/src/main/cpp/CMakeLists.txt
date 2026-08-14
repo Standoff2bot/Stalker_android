@@ -31,6 +31,11 @@ add_compile_definitions(
     SDL_stdinc_h_=1
 )
 
+# Force include our SDL stub before any SDL.h includes
+add_compile_options(
+    -include ${CMAKE_CURRENT_SOURCE_DIR}/SDL_stub.h
+)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
