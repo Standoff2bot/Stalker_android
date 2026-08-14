@@ -196,6 +196,7 @@ typedef dirent DirEntryType;
 #define O_SEQUENTIAL 0
 #define SH_DENYWR 0
 
+#ifndef itoa // Allow PlatformAndroid.inl to override
 #if __has_include(<SDL_stdinc.h>)
 #include <SDL_stdinc.h>
 #define itoa SDL_itoa
@@ -204,12 +205,15 @@ typedef dirent DirEntryType;
 #define itoa(...) do { static_assert(false, "SDL_stdinc.h is missing"); } while (false)
 #define _itoa_s(...) do { static_assert(false, "SDL_stdinc.h is missing"); } while (false)
 #endif
+#endif // itoa
 
 #define _stricmp stricmp
 #define strcmpi stricmp
 #define lstrcpy strcpy
 #define stricmp strcasecmp
+#ifndef strupr // Allow PlatformAndroid.inl to override
 #define strupr SDL_strupr
+#endif
 // error code numbers from original MS strcpy_s return value
 inline int strcpy_s(char *dest, size_t num, const char *source)
 {

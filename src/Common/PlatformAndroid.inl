@@ -15,35 +15,35 @@ inline char* android_itoa(int value, char* str, int base) {
         *str = '\0';
         return str;
     }
-    
+
     char* ptr = str;
     char* ptr1 = str;
     char tmp_char;
     int tmp_value;
-    
+
     // Handle negative numbers for base 10
     if (value < 0 && base == 10) {
         *ptr++ = '-';
         ptr1++;
         value = -value;
     }
-    
+
     // Convert to string in reverse order
     do {
         tmp_value = value;
         value /= base;
         *ptr++ = "0123456789abcdefghijklmnopqrstuvwxyz"[tmp_value - value * base];
     } while (value);
-    
+
     *ptr-- = '\0';
-    
+
     // Reverse string
     while (ptr1 < ptr) {
         tmp_char = *ptr;
         *ptr-- = *ptr1;
         *ptr1++ = tmp_char;
     }
-    
+
     return str;
 }
 
@@ -59,12 +59,13 @@ inline char* android_strupr(char* str) {
     return str;
 }
 
-// Create fake SDL_stdinc.h header flag so PlatformLinux.inl uses our functions
-#ifndef SDL_stdinc_h_
-#define SDL_stdinc_h_ 1
-#endif
-
+// Define these macros BEFORE PlatformLinux.inl loads
+// PlatformLinux.inl will check __has_include(<SDL_stdinc.h>) which returns false,
+// then try to define itoa as error. We override that by defining macros first.
+#define itoa android_itoa
+#define _itoa_s(value, str, size, base) android_itoa(value, str, base)
 #define SDL_itoa android_itoa
 #define SDL_strupr android_strupr
+#define strupr android_strupr
 
 #endif // ANDROID
