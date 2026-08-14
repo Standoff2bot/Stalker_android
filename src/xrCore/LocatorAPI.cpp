@@ -10,7 +10,9 @@
 #include <sys/stat.h>
 #include <sys/utime.h>
 #elif defined(XR_PLATFORM_POSIX)
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 #include <glob.h>
 #endif
 
