@@ -73,6 +73,7 @@ list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*Windows.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*dx.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*Editor.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*BoneEditor.*")
+list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*StackTrace.*") # Android Bionic doesn't have backtrace()
 
 add_library(xrCore STATIC ${XRCORE_SOURCES})
 target_compile_options(xrCore PRIVATE
