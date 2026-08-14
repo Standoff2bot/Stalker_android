@@ -77,6 +77,9 @@
 #if defined(XR_PLATFORM_WINDOWS)
 #include "Common/PlatformWindows.inl"
 #elif defined(XR_PLATFORM_LINUX) || defined(XR_PLATFORM_HAIKU)
+#ifdef ANDROID
+#include "Common/PlatformAndroid.inl"
+#endif
 #include "Common/PlatformLinux.inl"
 #elif defined(XR_PLATFORM_BSD)
 #include "Common/PlatformBSD.inl"
