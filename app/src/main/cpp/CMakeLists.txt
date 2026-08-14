@@ -8,6 +8,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # OpenXRay source root
 set(XRAY_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../xray-16/src)
 set(XRAY_EXTERNALS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../xray-16/Externals)
+set(XRAY_SDK ${CMAKE_CURRENT_SOURCE_DIR}/../../../../xray-16/sdk)
 
 # Platform defines
 add_compile_definitions(
@@ -51,6 +52,7 @@ include_directories(
     ${XRAY_EXTERNALS}/tracy/public
     ${XRAY_EXTERNALS}/LuaJIT/src
     ${XRAY_EXTERNALS}/luabind
+    ${XRAY_SDK}/include
 )
 
 # Find Android libraries
