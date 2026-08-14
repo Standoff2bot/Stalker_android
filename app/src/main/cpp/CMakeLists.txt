@@ -50,6 +50,7 @@ include_directories(
     ${XRAY_SRC}/Include
     ${XRAY_EXTERNALS}/tracy/public
     ${XRAY_EXTERNALS}/LuaJIT/src
+    ${XRAY_EXTERNALS}/luabind
 )
 
 # Find Android libraries
