@@ -201,6 +201,9 @@ void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs,
         GetModuleFileName(GetModuleHandle("xrCore"), fn, sizeof(fn));
         _splitpath(fn, dr, di, nullptr, nullptr);
         strconcat(sizeof(ApplicationPath), ApplicationPath, dr, di);
+#elif defined(ANDROID)
+        // Android: use hardcoded path (actual path set via JNI at runtime)
+        xr_strcpy(ApplicationPath, "/data/data/com.termux/files/home/xray-android/gamedata/");
 #elif defined(XR_PLATFORM_POSIX)
         char* base_path = SDL_GetBasePath();
         if (!base_path)
