@@ -306,8 +306,13 @@ void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs,
 
 // TODO Add proper check for CMake Windows build
 #if !defined(XR_PLATFORM_WINDOWS)
+#ifdef ANDROID
+        // Android doesn't use CMAKE_INSTALL_FULL_DATAROOTDIR
+        flags |= CLocatorAPI::flScanAppRoot;
+#else
         if (xr_stricmp(ApplicationPath, CMAKE_INSTALL_FULL_DATAROOTDIR) != 0)
             flags |= CLocatorAPI::flScanAppRoot;
+#endif
 #endif
 
 #ifndef _EDITOR
