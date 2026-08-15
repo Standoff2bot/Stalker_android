@@ -13,7 +13,9 @@
 
 #include "xrScriptEngine/script_space.hpp"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 ENGINE_API CRenderDevice Device;
 ENGINE_API CLoadScreenRenderer load_screen_renderer;

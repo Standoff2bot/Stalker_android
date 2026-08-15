@@ -3,7 +3,9 @@
 #pragma once
 
 #ifdef SDL_OUTPUT
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 #endif
 
 // refs

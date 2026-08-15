@@ -6,7 +6,9 @@
 #include "xrCore/_std_extensions.h"
 
 #include "FS_impl.h"
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 XRCORE_API str_container* g_pStringContainer = nullptr;
 

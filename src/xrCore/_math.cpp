@@ -1,7 +1,9 @@
 #include "stdafx.h"
 
 #include <thread>
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 // Initialized on startup
 XRCORE_API Fmatrix Fidentity;

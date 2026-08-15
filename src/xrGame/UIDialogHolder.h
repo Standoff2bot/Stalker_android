@@ -5,7 +5,9 @@
 #include "xrEngine/pure.h"
 #include "xrUICore/ui_debug.h"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 class CUIDialogWnd;
 class CUIWindow;

@@ -16,7 +16,9 @@
 
 #include "edit_actions.h"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 #include <locale>
 

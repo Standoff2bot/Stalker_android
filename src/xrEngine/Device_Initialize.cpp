@@ -6,7 +6,9 @@
 #include "PerformanceAlert.hpp"
 #include "xrCore/ModuleLookup.hpp"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 #ifdef IMGUI_ENABLE_VIEWPORTS
 #   include <SDL_syswm.h>
 #endif

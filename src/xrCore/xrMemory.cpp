@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 #if defined(XR_PLATFORM_WINDOWS)
 #include <Psapi.h>
