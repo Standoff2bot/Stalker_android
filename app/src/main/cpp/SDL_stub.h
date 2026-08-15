@@ -86,3 +86,26 @@ inline SDL_Window* SDL_CreateWindow(const char* title, int x, int y, int w, int 
 inline void SDL_DestroyWindow(SDL_Window* window) {
     // No-op on Android - window management done via JNI
 }
+
+// SDL_GetError - stub for Android (returns empty string)
+inline const char* SDL_GetError() {
+    return "";
+}
+
+// SDL_HasClipboardText - stub for Android (returns false)
+inline bool SDL_HasClipboardText() {
+    return false;
+}
+
+// SDL_GetClipboardText - stub for Android (returns empty string)
+inline char* SDL_GetClipboardText() {
+    char* result = (char*)malloc(1);
+    if (result) result[0] = '\0';
+    return result;
+}
+
+// SDL_SetClipboardText - stub for Android (returns 0)
+inline int SDL_SetClipboardText(const char* text) {
+    // No-op on Android - clipboard handled via JNI
+    return 0;
+}
