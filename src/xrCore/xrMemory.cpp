@@ -26,6 +26,8 @@
 #   else
 #       define USE_MIMALLOC
 #   endif
+#elif defined(ANDROID)
+#   define USE_PURE_ALLOC
 #endif
 
 #if defined(USE_MIMALLOC)
