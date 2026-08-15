@@ -91,9 +91,20 @@
 #define xr_alloca _alloca
 #endif
 
+#ifdef ANDROID
+// Android Bionic libc doesn't have itoa, use sprintf instead
+#define xr_itoa(value, buffer, radix) \
+    (radix == 10 ? sprintf(buffer, "%d", value) : \
+     radix == 16 ? sprintf(buffer, "%x", value) : \
+     sprintf(buffer, "%d", value), buffer)
 #define xr_strupr strupr
 #define xr_strlwr strlwr
+#else
+#define xr_strupr strupr
+#define xr_strlwr strlwr
+#define xr_itoa itoa
+#endif
+
 #define xr_stricmp stricmp
 #define xr_strcmpi strcmpi
-#define xr_itoa itoa
 #endif
