@@ -412,6 +412,8 @@ target_link_libraries(xrRender_GL
     xrParticles
     xrScriptEngine
     xrImGui
+    GLESv2
+    EGL
 )
 
 target_compile_definitions(xrRender_GL

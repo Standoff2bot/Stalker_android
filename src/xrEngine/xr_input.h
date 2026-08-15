@@ -2,7 +2,9 @@
 
 #include <bitset>
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 #include "xrCore/_vector2.h"
 

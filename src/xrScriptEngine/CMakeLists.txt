@@ -1,5 +1,5 @@
 add_library(xrScriptEngine)
-
+include_directories(/data/data/com.termux/files/usr/include/luajit-2.1)
 target_sources_grouped(
     TARGET xrScriptEngine
     NAME "Debug"

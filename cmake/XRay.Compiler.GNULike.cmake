@@ -127,8 +127,8 @@ elseif (PROJECT_PLATFORM_PPC)
     add_compile_definitions(NO_WARN_X86_INTRINSICS)
 else()
     add_compile_options(
-        -mfpmath=sse
-        -msse3
+        
+        
     )
 endif()
 

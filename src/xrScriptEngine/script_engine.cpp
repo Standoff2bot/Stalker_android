@@ -129,7 +129,8 @@ void CScriptEngine::reinit()
         lua_close(m_virtual_machine);
         UnregisterState(m_virtual_machine);
     }
-    m_virtual_machine = lua_newstate(lua_alloc, nullptr);
+    // Use standard Lua allocator instead of custom one for Android Bionic compatibility
+    m_virtual_machine = luaL_newstate();
     if (!m_virtual_machine)
     {
         Log("! ERROR : Cannot initialize script virtual machine!");
@@ -777,7 +778,7 @@ struct luajit
 
     static void allow_escape_sequences(bool allowed)
     {
-        lj_allow_escape_sequences(allowed ? 1 : 0);
+       // lj_allow_escape_sequences(allowed ? 1 : 0);
     }
 };
 

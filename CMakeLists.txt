@@ -11,10 +11,10 @@ project(OpenXRay
     HOMEPAGE_URL "https://github.com/OpenXRay/xray-16"
     LANGUAGES CXX C
 )
-
+include_directories(/data/data/com.termux/files/usr/include/luajit-2.1)
 option(BUILD_SHARED_LIBS "Build shared libraries"     ${BUILD_SHARED_LIBS_DEFAULT_VALUE})
 
-option(XRAY_USE_LUAJIT   "Use LuaJIT"                 ON)
+option(XRAY_USE_LUAJIT   "Use LuaJIT"                 OFF)
 option(XRAY_USE_ASAN     "Use AddressSanitizer"       OFF)
 option(XRAY_ENABLE_TRACY "Enable tracy profiler"      OFF)
 

@@ -600,10 +600,15 @@ void CLevel::script_gc()
         break;
 
     case 2:
+#ifdef LUA_GCTIMEOUT
         if (lua_gc(GEnv.ScriptEngine->lua(), LUA_GCTIMEOUT, psLUA_GCTIMEOUT) >= 0)
             break;
         // LUA_GCTIMEOUT is unsupported, fallback to LUA_GCSTEP
         [[fallthrough]];
+#else
+        // LuaJIT doesn't support LUA_GCTIMEOUT, fallback to LUA_GCSTEP
+        [[fallthrough]];
+#endif
 
     default:
         ps_lua_gc_method = 1;
