@@ -234,3 +234,19 @@ typedef void (*SDL_LogOutputFunction)(void* userdata, int category, SDL_LogPrior
 inline void SDL_LogSetOutputFunction(SDL_LogOutputFunction callback, void* userdata) {
     // No-op on Android - logging handled differently
 }
+
+// SDL dynamic library loading functions - stubs for Android
+// On Android, these are not used (modules are statically linked)
+inline void* SDL_LoadObject(const char* sofile) {
+    // Return nullptr - dynamic loading not supported on Android in this build
+    return nullptr;
+}
+
+inline void* SDL_LoadFunction(void* handle, const char* name) {
+    // Return nullptr - dynamic loading not supported
+    return nullptr;
+}
+
+inline void SDL_UnloadObject(void* handle) {
+    // No-op - nothing to unload
+}
