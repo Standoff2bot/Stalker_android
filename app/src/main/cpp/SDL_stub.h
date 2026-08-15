@@ -466,3 +466,28 @@ inline int SDL_GetWindowBordersSize(SDL_Window* window, int* top, int* left, int
 
 // SDL pixel format constant
 #define SDL_PIXELFORMAT_UNKNOWN 0
+
+// Additional SDL display and window functions
+inline SDL_DisplayMode* SDL_GetClosestDisplayMode(int displayIndex, const SDL_DisplayMode* mode, SDL_DisplayMode* closest) {
+    // Return the requested mode as closest
+    if (closest && mode) {
+        *closest = *mode;
+    }
+    return closest;
+}
+
+inline void SDL_SetWindowAlwaysOnTop(SDL_Window* window, SDL_bool on_top) {
+    // No-op on Android
+}
+
+inline void SDL_ShowWindow(SDL_Window* window) {
+    // No-op on Android
+}
+
+inline void SDL_MinimizeWindow(SDL_Window* window) {
+    // No-op on Android
+}
+
+inline void SDL_HideWindow(SDL_Window* window) {
+    // No-op on Android
+}
