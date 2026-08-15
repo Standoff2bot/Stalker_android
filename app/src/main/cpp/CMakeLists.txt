@@ -152,7 +152,7 @@ target_link_libraries(xray-engine
     xrCore
     xrCDB
     xrEngine
-    xrSound
+    # xrSound temporarily disabled
     xrScriptEngine
     xrServerEntities
     xrGame
