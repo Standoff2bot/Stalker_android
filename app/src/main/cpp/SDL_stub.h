@@ -250,3 +250,59 @@ inline void* SDL_LoadFunction(void* handle, const char* name) {
 inline void SDL_UnloadObject(void* handle) {
     // No-op - nothing to unload
 }
+
+// Additional SDL types needed by xrEngine
+typedef struct SDL_Point {
+    int x, y;
+} SDL_Point;
+
+typedef struct SDL_Surface {
+    Uint32 flags;
+    void* format;
+    int w, h;
+    int pitch;
+    void* pixels;
+    void* userdata;
+    int locked;
+    void* list_blitmap;
+    SDL_Rect clip_rect;
+    void* map;
+    int refcount;
+} SDL_Surface;
+
+typedef enum {
+    SDL_HITTEST_NORMAL,
+    SDL_HITTEST_DRAGGABLE,
+    SDL_HITTEST_RESIZE_TOPLEFT,
+    SDL_HITTEST_RESIZE_TOP,
+    SDL_HITTEST_RESIZE_TOPRIGHT,
+    SDL_HITTEST_RESIZE_RIGHT,
+    SDL_HITTEST_RESIZE_BOTTOMRIGHT,
+    SDL_HITTEST_RESIZE_BOTTOM,
+    SDL_HITTEST_RESIZE_BOTTOMLEFT,
+    SDL_HITTEST_RESIZE_LEFT
+} SDL_HitTestResult;
+
+// SDL window flags
+#define SDL_WINDOW_FULLSCREEN 0x00000001
+#define SDL_WINDOW_OPENGL 0x00000002
+#define SDL_WINDOW_SHOWN 0x00000004
+#define SDL_WINDOW_HIDDEN 0x00000008
+#define SDL_WINDOW_BORDERLESS 0x00000010
+#define SDL_WINDOW_RESIZABLE 0x00000020
+#define SDL_WINDOW_MINIMIZED 0x00000040
+#define SDL_WINDOW_MAXIMIZED 0x00000080
+
+// SDL functions that are not used on Android (stubs)
+inline SDL_Surface* SDL_LoadBMP(const char* file) {
+    // Not used on Android
+    return nullptr;
+}
+
+inline void SDL_SetWindowMinimumSize(SDL_Window* window, int min_w, int min_h) {
+    // No-op on Android
+}
+
+inline void SDL_SetTextInputRect(SDL_Rect* rect) {
+    // No-op on Android
+}
