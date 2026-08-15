@@ -21,7 +21,9 @@
 #include "ScopeLock.hpp"
 
 #include <thread>
+#ifndef ANDROID
 #include <SDL_events.h>
+#endif
 
 #include "Math/fast_lc16.hpp"
 
