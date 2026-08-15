@@ -23,7 +23,9 @@
 
 #include "xrScriptEngine/ScriptExporter.hpp"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 // refs
 class Task;
