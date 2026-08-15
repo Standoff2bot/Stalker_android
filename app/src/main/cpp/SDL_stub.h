@@ -6,12 +6,17 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include <cstdint>
 
 // SDL string functions - map to standard C
 #define SDL_strlen strlen
 #define SDL_strlcpy(dst, src, size) strncpy(dst, src, size)
 #define SDL_free free
 #define SDL_malloc malloc
+
+// SDL basic types
+typedef uint32_t Uint32;
+typedef uint8_t Uint8;
 
 // SDL scancode constants
 #define SDL_NUM_SCANCODES 512
@@ -26,6 +31,18 @@
 // Forward declarations for SDL types (minimal stubs)
 struct SDL_GameController;
 struct SDL_Cursor;
+
+// SDL rectangle structure
+typedef struct SDL_Rect {
+    int x, y;
+    int w, h;
+} SDL_Rect;
+
+// SDL event structure (minimal stub)
+typedef struct SDL_Event {
+    Uint32 type;
+    Uint32 timestamp;
+} SDL_Event;
 
 // SDL system cursor enum
 typedef enum {
