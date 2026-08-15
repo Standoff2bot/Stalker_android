@@ -31,6 +31,7 @@ typedef uint8_t Uint8;
 // Forward declarations for SDL types (minimal stubs)
 struct SDL_GameController;
 struct SDL_Cursor;
+struct SDL_Window;
 
 // SDL rectangle structure
 typedef struct SDL_Rect {
@@ -73,4 +74,15 @@ inline char* SDL_GetPrefPath(const char* org, const char* app) {
 // SDL_PumpEvents - stub for Android (no-op)
 inline void SDL_PumpEvents() {
     // No-op on Android - event handling done via JNI
+}
+
+// SDL_CreateWindow - stub for Android (returns nullptr)
+inline SDL_Window* SDL_CreateWindow(const char* title, int x, int y, int w, int h, Uint32 flags) {
+    // No-op on Android - window management done via JNI
+    return nullptr;
+}
+
+// SDL_DestroyWindow - stub for Android (no-op)
+inline void SDL_DestroyWindow(SDL_Window* window) {
+    // No-op on Android - window management done via JNI
 }
