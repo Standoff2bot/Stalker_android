@@ -57,6 +57,7 @@ include_directories(
     ${XRAY_EXTERNALS}/tracy/public
     ${XRAY_EXTERNALS}/LuaJIT/src
     ${XRAY_EXTERNALS}/luabind
+    ${XRAY_EXTERNALS}/sse2neon
     ${XRAY_SDK}/include
 )
 
