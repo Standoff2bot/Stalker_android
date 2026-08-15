@@ -131,7 +131,24 @@ void* __stdcall xr_aligned_offset_malloc(size_t size, size_t align, size_t offse
 
 void* __stdcall xr_aligned_realloc(void* memblock, size_t size, size_t alignment)
 {
+#ifdef ANDROID
+    // Android Bionic doesn't have _msize/_expand, use simple realloc approach
+    if (!memblock)
+        return xr_aligned_malloc(size, alignment);
+    
+    // Allocate new aligned block and copy data
+    void* new_ptr = xr_aligned_malloc(size, alignment);
+    if (!new_ptr)
+        return NULL;
+    
+    // Copy old data (assume at least 'size' bytes, worst case scenario)
+    memcpy(new_ptr, memblock, size);
+    xr_aligned_free(memblock);
+    
+    return new_ptr;
+#else
     return xr_aligned_offset_realloc(memblock, size, alignment, 0);
+#endif
 }
 
 /***
@@ -162,6 +179,25 @@ void* __stdcall xr_aligned_realloc(void* memblock, size_t size, size_t alignment
 
 void* __stdcall xr_aligned_offset_realloc(void* memblock, size_t size, size_t align, size_t offset)
 {
+#ifdef ANDROID
+    // Android Bionic doesn't have _msize/_expand, use simple approach
+    if (!memblock)
+        return xr_aligned_offset_malloc(size, align, offset);
+    if (size == 0) {
+        xr_aligned_free(memblock);
+        return NULL;
+    }
+    
+    // Allocate new aligned block and copy data
+    void* new_ptr = xr_aligned_offset_malloc(size, align, offset);
+    if (!new_ptr)
+        return NULL;
+    
+    memcpy(new_ptr, memblock, size);
+    xr_aligned_free(memblock);
+    
+    return new_ptr;
+#else
     uintptr_t ptr, retptr, gap, stptr, diff;
     uintptr_t movsz, reqsz;
     int bFree = 0;
@@ -245,6 +281,7 @@ void* __stdcall xr_aligned_offset_realloc(void* memblock, size_t size, size_t al
 
     ((uintptr_t*)(retptr - gap))[-1] = ptr;
     return (void*)retptr;
+#endif // !ANDROID
 }
 
 /***
@@ -281,6 +318,10 @@ void __stdcall xr_aligned_free(void* memblock)
 
 size_t __stdcall xr_aligned_msize(void* memblock)
 {
+#ifdef ANDROID
+    // Android Bionic doesn't have _msize, return 0 as fallback
+    return 0;
+#else
     uintptr_t ptr;
 
     if (memblock == NULL)
@@ -294,4 +335,5 @@ size_t __stdcall xr_aligned_msize(void* memblock)
     /* ptr is the pointer to the start of memory block*/
     ptr = *((uintptr_t*)ptr);
     return _msize((void*)ptr);
+#endif
 }

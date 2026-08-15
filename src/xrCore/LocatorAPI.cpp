@@ -700,6 +700,10 @@ bool CLocatorAPI::Recurse(pcstr path)
     if (handle == -1)
         return false;
 #elif defined(XR_PLATFORM_POSIX)
+#ifdef ANDROID
+    // glob() is not available on Android Bionic, skip directory scanning
+    return false;
+#else
     glob_t globbuf;
 
     globbuf.gl_offs = 256;
@@ -709,6 +713,7 @@ bool CLocatorAPI::Recurse(pcstr path)
         return false;
 
     intptr_t handle = globbuf.gl_pathc - 1;
+#endif // !ANDROID
 #else
 #   error Select or add implementation for your platform
 #endif
@@ -776,7 +781,9 @@ bool CLocatorAPI::Recurse(pcstr path)
 #ifdef XR_PLATFORM_WINDOWS
     _findclose(handle);
 #elif defined(XR_PLATFORM_POSIX)
+#ifndef ANDROID
     globfree(&globbuf);
+#endif
 #else
 #   error Select or add implementation for your platform
 #endif
@@ -853,7 +860,11 @@ void CLocatorAPI::setup_fs_path(pcstr fs_name)
              * I propose adding shaders from <CMAKE_INSTALL_FULL_DATAROOTDIR>/openxray/gamedata/shaders so that we remove unnecessary questions from users who want to start
              * the game using resources not from the proposed ~/.local/share/GSC Game World/Game in this case, this section of code can be safely removed */
             chdir(pref_path);
+#ifndef ANDROID
             static constexpr pcstr install_dir = CMAKE_INSTALL_FULL_DATAROOTDIR;
+#else
+            static constexpr pcstr install_dir = "/sdcard/openxray";
+#endif
             string_path tmp, tmp_link;
             xr_sprintf(tmp, "%sfsgame.ltx", pref_path);
             struct stat statbuf;
