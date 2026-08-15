@@ -1,7 +1,7 @@
 #pragma once
 
-// Minimal SDL stub for Android - provides only the functions used by LocatorAPI.cpp and TaskManager.cpp
-// Real SDL2 not needed for basic file system operations
+// Minimal SDL stub for Android - provides types and constants used by xrEngine
+// Real SDL2 input handling not used on Android (handled via JNI)
 
 #include <cstdlib>
 #include <cstring>
@@ -13,11 +13,38 @@
 #define SDL_free free
 #define SDL_malloc malloc
 
+// SDL scancode constants
+#define SDL_NUM_SCANCODES 512
+#define SDL_SCANCODE_UNKNOWN 0
+
+// SDL controller axis count
+#define SDL_CONTROLLER_AXIS_MAX 6
+
+// SDL system cursor count
+#define SDL_NUM_SYSTEM_CURSORS 11
+
+// Forward declarations for SDL types (minimal stubs)
+struct SDL_GameController;
+struct SDL_Cursor;
+
+// SDL system cursor enum
+typedef enum {
+    SDL_SYSTEM_CURSOR_ARROW,
+    SDL_SYSTEM_CURSOR_IBEAM,
+    SDL_SYSTEM_CURSOR_WAIT,
+    SDL_SYSTEM_CURSOR_CROSSHAIR,
+    SDL_SYSTEM_CURSOR_WAITARROW,
+    SDL_SYSTEM_CURSOR_SIZENWSE,
+    SDL_SYSTEM_CURSOR_SIZENESW,
+    SDL_SYSTEM_CURSOR_SIZEWE,
+    SDL_SYSTEM_CURSOR_SIZENS,
+    SDL_SYSTEM_CURSOR_SIZEALL,
+    SDL_SYSTEM_CURSOR_NO,
+    SDL_SYSTEM_CURSOR_HAND
+} SDL_SystemCursor;
+
 // SDL_GetPrefPath - returns Android-specific user data directory
-// For Android, we use /sdcard/Android/data/com.openxray.stalker/files/
 inline char* SDL_GetPrefPath(const char* org, const char* app) {
-    // Simplified: return hardcoded Android path
-    // Real implementation would get this from Java via JNI
     const char* path = "/sdcard/Android/data/com.openxray.stalker/files/";
     char* result = (char*)malloc(strlen(path) + 1);
     if (result) {
