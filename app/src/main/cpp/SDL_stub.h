@@ -219,3 +219,18 @@ inline char* SDL_GetBasePath() {
     }
     return result;
 }
+
+// SDL_ShowSimpleMessageBox - stub for Android (returns 0)
+inline int SDL_ShowSimpleMessageBox(Uint32 flags, const char* title, const char* message, SDL_Window* window) {
+    // No-op on Android - message boxes handled via JNI
+    return 0;
+}
+
+// SDL_arraysize - macro for array size
+#define SDL_arraysize(array) (sizeof(array)/sizeof(array[0]))
+
+// SDL_LogSetOutputFunction - stub for Android (no-op)
+typedef void (*SDL_LogOutputFunction)(void* userdata, int category, SDL_LogPriority priority, const char* message);
+inline void SDL_LogSetOutputFunction(SDL_LogOutputFunction callback, void* userdata) {
+    // No-op on Android - logging handled differently
+}
