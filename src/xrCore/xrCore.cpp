@@ -17,7 +17,9 @@
 #include "xrCore/_std_extensions.h"
 #include "Threading/TaskManager.hpp"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 #if __has_include(".GitInfo.hpp")
 #include ".GitInfo.hpp"

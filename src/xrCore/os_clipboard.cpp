@@ -13,7 +13,9 @@
 #include "os_clipboard.h"
 #include "Text/StringConversion.hpp"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 #include <locale>
 

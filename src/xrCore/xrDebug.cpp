@@ -7,7 +7,9 @@
 #include "log.h"
 #include "Threading/ScopeLock.hpp"
 
+#ifndef ANDROID
 #include <SDL.h>
+#endif
 
 #include <csignal>
 
