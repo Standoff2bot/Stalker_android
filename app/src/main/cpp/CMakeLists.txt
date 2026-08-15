@@ -104,21 +104,20 @@ file(GLOB_RECURSE XRSCRIPT_SOURCES ${XRAY_SRC}/xrScriptEngine/*.cpp)
 add_library(xrScriptEngine STATIC ${XRSCRIPT_SOURCES})
 target_link_libraries(xrScriptEngine PRIVATE xrCore)
 
-# xrSound stub (OpenAL integration needed)
-file(GLOB_RECURSE XRSOUND_SOURCES ${XRAY_SRC}/xrSound/*.cpp)
-list(FILTER XRSOUND_SOURCES EXCLUDE REGEX ".*OpenALDeviceList.*")
-add_library(xrSound STATIC ${XRSOUND_SOURCES})
-target_link_libraries(xrSound PRIVATE xrCore)
+# xrSound temporarily disabled (ENGINE_API dependency issue)
+# file(GLOB_RECURSE XRSOUND_SOURCES ${XRAY_SRC}/xrSound/*.cpp)
+# list(FILTER XRSOUND_SOURCES EXCLUDE REGEX ".*OpenALDeviceList.*")
+# add_library(xrSound STATIC ${XRSOUND_SOURCES})
+# target_link_libraries(xrSound PRIVATE xrCore)
 
 # xrEngine - main engine
 file(GLOB_RECURSE XRENGINE_SOURCES ${XRAY_SRC}/xrEngine/*.cpp)
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*xrRender.*")
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*Device_create.*")
 add_library(xrEngine STATIC ${XRENGINE_SOURCES})
-target_link_libraries(xrEngine PRIVATE 
+target_link_libraries(xrEngine PRIVATE
     xrCore
     xrCDB
-    xrSound
 )
 
 # xrServerEntities
