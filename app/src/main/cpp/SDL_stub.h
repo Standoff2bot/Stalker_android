@@ -306,3 +306,94 @@ inline void SDL_SetWindowMinimumSize(SDL_Window* window, int min_w, int min_h) {
 inline void SDL_SetTextInputRect(SDL_Rect* rect) {
     // No-op on Android
 }
+
+// SDL boolean values
+#define SDL_TRUE 1
+#define SDL_FALSE 0
+
+// SDL enable/disable
+#define SDL_DISABLE 0
+#define SDL_ENABLE 1
+
+// SDL_DisplayMode structure
+typedef struct SDL_DisplayMode {
+    Uint32 format;
+    int w;
+    int h;
+    int refresh_rate;
+    void* driverdata;
+} SDL_DisplayMode;
+
+// Additional SDL window and display functions (all stubs for Android)
+inline void SDL_SetWindowIcon(SDL_Window* window, SDL_Surface* icon) {
+    // No-op on Android
+}
+
+typedef SDL_HitTestResult (*SDL_HitTest)(SDL_Window* win, const SDL_Point* area, void* data);
+
+inline int SDL_SetWindowHitTest(SDL_Window* window, SDL_HitTest callback, void* callback_data) {
+    // No-op on Android, return 0 (success)
+    return 0;
+}
+
+inline int SDL_GetNumDisplayModes(int displayIndex) {
+    // Return 1 (single mode) for Android
+    return 1;
+}
+
+inline int SDL_GetDisplayBounds(int displayIndex, SDL_Rect* rect) {
+    // Stub: return fake bounds
+    if (rect) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->w = 1920;
+        rect->h = 1080;
+    }
+    return 0;
+}
+
+inline int SDL_GetDisplayUsableBounds(int displayIndex, SDL_Rect* rect) {
+    // Same as GetDisplayBounds on Android
+    return SDL_GetDisplayBounds(displayIndex, rect);
+}
+
+inline int SDL_GetDisplayDPI(int displayIndex, float* ddpi, float* hdpi, float* vdpi) {
+    // Stub: return fake DPI
+    if (ddpi) *ddpi = 160.0f;
+    if (hdpi) *hdpi = 160.0f;
+    if (vdpi) *vdpi = 160.0f;
+    return 0;
+}
+
+inline int SDL_GetNumVideoDisplays() {
+    // Return 1 display for Android
+    return 1;
+}
+
+inline const char* SDL_GetDisplayName(int displayIndex) {
+    // Return fake display name
+    return "Android Display";
+}
+
+inline Uint32 SDL_GetWindowFlags(SDL_Window* window) {
+    // Return default flags
+    return SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+}
+
+inline int SDL_SetWindowOpacity(SDL_Window* window, float opacity) {
+    // No-op on Android, return 0 (success)
+    return 0;
+}
+
+inline int SDL_GetWindowDisplayIndex(SDL_Window* window) {
+    // Always return 0 (first display) on Android
+    return 0;
+}
+
+inline void SDL_SetWindowPosition(SDL_Window* window, int x, int y) {
+    // No-op on Android
+}
+
+inline void SDL_SetWindowSize(SDL_Window* window, int w, int h) {
+    // No-op on Android
+}
