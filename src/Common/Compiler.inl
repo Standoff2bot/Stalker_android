@@ -92,21 +92,12 @@
 #endif
 
 #ifdef ANDROID
-// Android Bionic libc doesn't have itoa/strupr/strlwr, use alternatives
+// Android Bionic libc doesn't have itoa, use sprintf
 #define xr_itoa(value, buffer, radix) \
     (radix == 10 ? sprintf(buffer, "%d", value) : \
      radix == 16 ? sprintf(buffer, "%x", value) : \
      sprintf(buffer, "%d", value), buffer)
-
-// strupr/strlwr implementations for Android (inline)
-inline char* xr_strupr(char* s) {
-    for (char* p = s; *p; ++p) *p = toupper((unsigned char)*p);
-    return s;
-}
-inline char* xr_strlwr(char* s) {
-    for (char* p = s; *p; ++p) *p = tolower((unsigned char)*p);
-    return s;
-}
+// Note: xr_strupr/xr_strlwr are defined in xrCore/xrstring.h for all platforms
 #else
 #define xr_strupr strupr
 #define xr_strlwr strlwr
