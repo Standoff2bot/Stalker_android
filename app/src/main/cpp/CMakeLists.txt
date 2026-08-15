@@ -83,6 +83,7 @@ list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*StackTrace.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*ModuleLookup.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*ThreadUtil.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*mailSlot.*")
+list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*/Threading/TaskManager.*")
 
 add_library(xrCore STATIC ${XRCORE_SOURCES})
 target_compile_options(xrCore PRIVATE
