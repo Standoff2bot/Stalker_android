@@ -397,3 +397,72 @@ inline void SDL_SetWindowPosition(SDL_Window* window, int x, int y) {
 inline void SDL_SetWindowSize(SDL_Window* window, int w, int h) {
     // No-op on Android
 }
+
+inline void SDL_GetWindowSize(SDL_Window* window, int* w, int* h) {
+    // Return fake size
+    if (w) *w = 1920;
+    if (h) *h = 1080;
+}
+
+inline void SDL_GetWindowPosition(SDL_Window* window, int* x, int* y) {
+    // Return fake position
+    if (x) *x = 0;
+    if (y) *y = 0;
+}
+
+inline int SDL_GetDisplayMode(int displayIndex, int modeIndex, SDL_DisplayMode* mode) {
+    // Return fake display mode
+    if (mode) {
+        mode->format = 0;
+        mode->w = 1920;
+        mode->h = 1080;
+        mode->refresh_rate = 60;
+        mode->driverdata = nullptr;
+    }
+    return 0;
+}
+
+inline int SDL_GetCurrentDisplayMode(int displayIndex, SDL_DisplayMode* mode) {
+    // Same as GetDisplayMode
+    return SDL_GetDisplayMode(displayIndex, 0, mode);
+}
+
+inline int SDL_GetWindowDisplayMode(SDL_Window* window, SDL_DisplayMode* mode) {
+    // Return fake mode
+    return SDL_GetDisplayMode(0, 0, mode);
+}
+
+inline int SDL_SetWindowDisplayMode(SDL_Window* window, const SDL_DisplayMode* mode) {
+    // No-op on Android, return 0 (success)
+    return 0;
+}
+
+inline int SDL_SetWindowFullscreen(SDL_Window* window, Uint32 flags) {
+    // No-op on Android, return 0 (success)
+    return 0;
+}
+
+typedef int SDL_bool;
+
+inline void SDL_SetWindowBordered(SDL_Window* window, SDL_bool bordered) {
+    // No-op on Android
+}
+
+inline void SDL_SetWindowResizable(SDL_Window* window, SDL_bool resizable) {
+    // No-op on Android
+}
+
+inline int SDL_GetWindowBordersSize(SDL_Window* window, int* top, int* left, int* bottom, int* right) {
+    // Return zero borders for Android
+    if (top) *top = 0;
+    if (left) *left = 0;
+    if (bottom) *bottom = 0;
+    if (right) *right = 0;
+    return 0;
+}
+
+// Additional SDL window flag
+#define SDL_WINDOW_FULLSCREEN_DESKTOP 0x00001001
+
+// SDL pixel format constant
+#define SDL_PIXELFORMAT_UNKNOWN 0
