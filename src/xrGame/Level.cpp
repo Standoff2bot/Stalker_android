@@ -600,7 +600,7 @@ void CLevel::script_gc()
         break;
 
     case 2:
-#ifdef LUA_GCTIMEOUT
+#if defined(LUA_GCTIMEOUT) && !defined(ANDROID)
         if (lua_gc(GEnv.ScriptEngine->lua(), LUA_GCTIMEOUT, psLUA_GCTIMEOUT) >= 0)
             break;
         // LUA_GCTIMEOUT is unsupported, fallback to LUA_GCSTEP
