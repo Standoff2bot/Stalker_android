@@ -303,7 +303,7 @@ inline void SDL_SetWindowMinimumSize(SDL_Window* window, int min_w, int min_h) {
     // No-op on Android
 }
 
-inline void SDL_SetTextInputRect(SDL_Rect* rect) {
+inline void SDL_SetTextInputRect(const SDL_Rect* rect) {
     // No-op on Android
 }
 
