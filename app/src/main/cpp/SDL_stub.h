@@ -1,6 +1,6 @@
 #pragma once
 
-// Minimal SDL stub for Android - provides only the functions used by LocatorAPI.cpp
+// Minimal SDL stub for Android - provides only the functions used by LocatorAPI.cpp and TaskManager.cpp
 // Real SDL2 not needed for basic file system operations
 
 #include <cstdlib>
@@ -24,4 +24,9 @@ inline char* SDL_GetPrefPath(const char* org, const char* app) {
         strcpy(result, path);
     }
     return result;
+}
+
+// SDL_PumpEvents - stub for Android (no-op)
+inline void SDL_PumpEvents() {
+    // No-op on Android - event handling done via JNI
 }
