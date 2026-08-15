@@ -61,6 +61,89 @@ typedef enum {
     SDL_SYSTEM_CURSOR_HAND
 } SDL_SystemCursor;
 
+// SDL MessageBox types and constants
+typedef enum {
+    SDL_MESSAGEBOX_ERROR = 0x00000010,
+    SDL_MESSAGEBOX_WARNING = 0x00000020,
+    SDL_MESSAGEBOX_INFORMATION = 0x00000040
+} SDL_MessageBoxFlags;
+
+typedef enum {
+    SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT = 0x00000001,
+    SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT = 0x00000002
+} SDL_MessageBoxButtonFlags;
+
+typedef struct SDL_MessageBoxButtonData {
+    Uint32 flags;
+    int buttonid;
+    const char* text;
+} SDL_MessageBoxButtonData;
+
+typedef struct SDL_MessageBoxData {
+    Uint32 flags;
+    SDL_Window* window;
+    const char* title;
+    const char* message;
+    int numbuttons;
+    const SDL_MessageBoxButtonData* buttons;
+    const void* colorScheme;
+} SDL_MessageBoxData;
+
+// SDL Assertion types and constants
+typedef enum {
+    SDL_ASSERTION_RETRY = 0,
+    SDL_ASSERTION_BREAK = 1,
+    SDL_ASSERTION_ABORT = 2,
+    SDL_ASSERTION_IGNORE = 3,
+    SDL_ASSERTION_ALWAYS_IGNORE = 4
+} SDL_AssertState;
+
+typedef struct SDL_AssertData {
+    int always_ignore;
+    unsigned int trigger_count;
+    const char* condition;
+    const char* filename;
+    int linenum;
+    const char* function;
+    const struct SDL_AssertData* next;
+} SDL_AssertData;
+
+typedef SDL_AssertState (*SDL_AssertionHandler)(const SDL_AssertData* data, void* userdata);
+
+// SDL Log priority
+typedef enum {
+    SDL_LOG_CATEGORY_APPLICATION = 0,
+    SDL_LOG_CATEGORY_ERROR = 1,
+    SDL_LOG_CATEGORY_ASSERT = 2,
+    SDL_LOG_CATEGORY_SYSTEM = 3,
+    SDL_LOG_CATEGORY_AUDIO = 4,
+    SDL_LOG_CATEGORY_VIDEO = 5,
+    SDL_LOG_CATEGORY_RENDER = 6,
+    SDL_LOG_CATEGORY_INPUT = 7,
+    SDL_LOG_CATEGORY_TEST = 8,
+    SDL_LOG_CATEGORY_RESERVED1 = 9,
+    SDL_LOG_CATEGORY_RESERVED2 = 10,
+    SDL_LOG_CATEGORY_RESERVED3 = 11,
+    SDL_LOG_CATEGORY_RESERVED4 = 12,
+    SDL_LOG_CATEGORY_RESERVED5 = 13,
+    SDL_LOG_CATEGORY_RESERVED6 = 14,
+    SDL_LOG_CATEGORY_RESERVED7 = 15,
+    SDL_LOG_CATEGORY_RESERVED8 = 16,
+    SDL_LOG_CATEGORY_RESERVED9 = 17,
+    SDL_LOG_CATEGORY_RESERVED10 = 18,
+    SDL_LOG_CATEGORY_CUSTOM = 19
+} SDL_LogCategory;
+
+typedef enum {
+    SDL_LOG_PRIORITY_VERBOSE = 1,
+    SDL_LOG_PRIORITY_DEBUG = 2,
+    SDL_LOG_PRIORITY_INFO = 3,
+    SDL_LOG_PRIORITY_WARN = 4,
+    SDL_LOG_PRIORITY_ERROR = 5,
+    SDL_LOG_PRIORITY_CRITICAL = 6,
+    SDL_NUM_LOG_PRIORITIES = 7
+} SDL_LogPriority;
+
 // SDL_GetPrefPath - returns Android-specific user data directory
 inline char* SDL_GetPrefPath(const char* org, const char* app) {
     const char* path = "/sdcard/Android/data/com.openxray.stalker/files/";
@@ -108,4 +191,31 @@ inline char* SDL_GetClipboardText() {
 inline int SDL_SetClipboardText(const char* text) {
     // No-op on Android - clipboard handled via JNI
     return 0;
+}
+
+// SDL_ShowMessageBox - stub for Android (returns 0)
+inline int SDL_ShowMessageBox(const SDL_MessageBoxData* messageboxdata, int* buttonid) {
+    // No-op on Android - message boxes handled via JNI
+    if (buttonid) *buttonid = 0;
+    return 0;
+}
+
+// SDL_SetAssertionHandler - stub for Android (no-op)
+inline void SDL_SetAssertionHandler(SDL_AssertionHandler handler, void* userdata) {
+    // No-op on Android - assertions handled differently
+}
+
+// SDL_GetPlatform - returns "Android"
+inline const char* SDL_GetPlatform() {
+    return "Android";
+}
+
+// SDL_GetBasePath - returns Android app directory
+inline char* SDL_GetBasePath() {
+    const char* path = "/sdcard/Android/data/com.openxray.stalker/files/";
+    char* result = (char*)malloc(strlen(path) + 1);
+    if (result) {
+        strcpy(result, path);
+    }
+    return result;
 }
