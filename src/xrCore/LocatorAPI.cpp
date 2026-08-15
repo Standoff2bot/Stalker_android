@@ -695,15 +695,15 @@ bool CLocatorAPI::Recurse(pcstr path)
     xr_strcat(scanPath, "*");
     _finddata_t findData;
     convert_path_separators(scanPath);
+#ifdef ANDROID
+    // glob() is not available on Android Bionic, skip directory scanning
+    return false;
+#else
 #ifdef XR_PLATFORM_WINDOWS
     intptr_t handle = _findfirst(scanPath, &findData);
     if (handle == -1)
         return false;
 #elif defined(XR_PLATFORM_POSIX)
-#ifdef ANDROID
-    // glob() is not available on Android Bionic, skip directory scanning
-    return false;
-#else
     glob_t globbuf;
 
     globbuf.gl_offs = 256;
@@ -713,7 +713,6 @@ bool CLocatorAPI::Recurse(pcstr path)
         return false;
 
     intptr_t handle = globbuf.gl_pathc - 1;
-#endif // !ANDROID
 #else
 #   error Select or add implementation for your platform
 #endif
@@ -781,9 +780,7 @@ bool CLocatorAPI::Recurse(pcstr path)
 #ifdef XR_PLATFORM_WINDOWS
     _findclose(handle);
 #elif defined(XR_PLATFORM_POSIX)
-#ifndef ANDROID
     globfree(&globbuf);
-#endif
 #else
 #   error Select or add implementation for your platform
 #endif
@@ -801,7 +798,7 @@ bool CLocatorAPI::Recurse(pcstr path)
     // insert self
     if (path[0] != '\0')
         Register(path, VFS_STANDARD_FILE, 0, 0, 0, 0, 0);
-
+#endif // !ANDROID
     return true;
 }
 
