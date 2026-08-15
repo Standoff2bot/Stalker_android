@@ -31,7 +31,7 @@ void CDbgLuaHelper::PrepareLuaBind()
 {
     luabind::set_pcall_callback([](lua_State* L) { lua_pushcfunction(L, CDbgLuaHelper::hookLuaBind); });
 
-#if !XRAY_EXCEPTIONS
+#if !XRAY_EXCEPTIONS && !defined(ANDROID)
     luabind::set_error_callback(errormessageLuaBind);
 #endif
 }

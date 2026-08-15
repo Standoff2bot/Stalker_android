@@ -712,13 +712,13 @@ void CScriptEngine::setup_callbacks()
     if (!debugger() || !debugger()->Active())
 #endif
     {
-#if !XRAY_EXCEPTIONS
+#if !XRAY_EXCEPTIONS && !defined(ANDROID)
         luabind::set_error_callback(CScriptEngine::lua_error);
 #endif
 
         luabind::set_pcall_callback([](lua_State* L) { lua_pushcfunction(L, CScriptEngine::lua_pcall_failed); });
     }
-#if !XRAY_EXCEPTIONS
+#if !XRAY_EXCEPTIONS && !defined(ANDROID)
     luabind::set_cast_failed_callback(CScriptEngine::lua_cast_failed);
 #endif
     lua_atpanic(lua(), CScriptEngine::lua_panic);
