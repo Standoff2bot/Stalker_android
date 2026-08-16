@@ -286,9 +286,41 @@ typedef struct SDL_Rect {
 } SDL_Rect;
 
 // SDL event structure (minimal stub)
-typedef struct SDL_Event {
+// SDL Window Event structure
+typedef struct SDL_WindowEvent {
     Uint32 type;
     Uint32 timestamp;
+    Uint32 windowID;
+    Uint8 event;
+    Uint8 padding1;
+    Uint8 padding2;
+    Uint8 padding3;
+    int data1;
+    int data2;
+} SDL_WindowEvent;
+
+// SDL Display Event structure
+typedef struct SDL_DisplayEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 display;
+    Uint8 event;
+    Uint8 padding1;
+    Uint8 padding2;
+    Uint8 padding3;
+    int data1;
+} SDL_DisplayEvent;
+
+// SDL Event union
+typedef union SDL_Event {
+    Uint32 type;
+    struct {
+        Uint32 type;
+        Uint32 timestamp;
+    } common;
+    SDL_WindowEvent window;
+    SDL_DisplayEvent display;
+    Uint8 padding[56];
 } SDL_Event;
 
 // SDL system cursor enum
@@ -742,4 +774,40 @@ inline void SDL_MinimizeWindow(SDL_Window* window) {
 
 inline void SDL_HideWindow(SDL_Window* window) {
     // No-op on Android
+}
+
+// Window flags
+#define SDL_WINDOW_INPUT_FOCUS 0x00000200
+
+// Event types
+#define SDL_DISPLAYEVENT 0x150
+#define SDL_WINDOWEVENT 0x200
+
+// Display event types
+#define SDL_DISPLAYEVENT_ORIENTATION 0
+#define SDL_DISPLAYEVENT_CONNECTED 1
+#define SDL_DISPLAYEVENT_DISCONNECTED 2
+
+// Window event types
+#define SDL_WINDOWEVENT_MOVED 4
+#define SDL_WINDOWEVENT_RESIZED 5
+#define SDL_WINDOWEVENT_SIZE_CHANGED 6
+#define SDL_WINDOWEVENT_ENTER 11
+#define SDL_WINDOWEVENT_LEAVE 12
+#define SDL_WINDOWEVENT_DISPLAY_CHANGED 13
+
+// Hints
+#define SDL_HINT_GRAB_KEYBOARD "SDL_GRAB_KEYBOARD"
+
+// Keyboard mod state functions
+inline int SDL_GetModState() {
+    return 0; // No modifier keys on Android stub
+}
+
+inline Uint32 SDL_GetWindowFlags(SDL_Window* window) {
+    return 0; // Return no flags on Android stub
+}
+
+inline SDL_Window* SDL_GetWindowFromID(Uint32 id) {
+    return nullptr; // No window lookup on Android stub
 }
