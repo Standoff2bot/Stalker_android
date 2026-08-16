@@ -281,8 +281,8 @@ typedef uint8_t Uint8;
 #define SDL_NUM_SYSTEM_CURSORS 11
 
 // Forward declarations for SDL types (minimal stubs)
-struct SDL_GameController;
-struct SDL_Cursor;
+typedef void* SDL_GameController;
+typedef void* SDL_Cursor;
 struct SDL_Window;
 
 // SDL rectangle structure
@@ -1144,6 +1144,13 @@ inline int SDL_GameControllerRumbleTriggers(void* gamecontroller, Uint16 left_ru
 
 inline int SDL_GameControllerSetSensorEnabled(void* gamecontroller, int type, int enabled) {
     return -1; // Not supported on Android stub
+}
+
+
+inline const char* SDL_GetKeyName(int key) {
+    static char buf[32];
+    snprintf(buf, sizeof(buf), "Key_%d", key);
+    return buf;
 }
 
 inline int SDL_GetKeyFromScancode(int scancode) {
