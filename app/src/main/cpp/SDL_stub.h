@@ -1089,15 +1089,15 @@ inline int SDL_ShowCursor(int toggle) {
 }
 
 // Cursor functions
-inline void* SDL_CreateSystemCursor(int id) {
+inline SDL_Cursor* SDL_CreateSystemCursor(int id) {
     return nullptr; // No cursor on Android stub
 }
 
-inline void SDL_SetCursor(void* cursor) {
+inline void SDL_SetCursor(SDL_Cursor* cursor) {
     // No-op on Android stub
 }
 
-inline void SDL_FreeCursor(void* cursor) {
+inline void SDL_FreeCursor(SDL_Cursor* cursor) {
     // No-op on Android stub
 }
 
@@ -1110,15 +1110,15 @@ inline int SDL_IsGameController(int device_index) {
     return 0; // Not a controller
 }
 
-inline void* SDL_GameControllerOpen(int device_index) {
+inline SDL_GameController* SDL_GameControllerOpen(int device_index) {
     return nullptr; // No controller on Android stub
 }
 
-inline void SDL_GameControllerClose(void* gamecontroller) {
+inline void SDL_GameControllerClose(SDL_GameController* gamecontroller) {
     // No-op on Android stub
 }
 
-inline void* SDL_GameControllerFromInstanceID(int joyid) {
+inline SDL_GameController* SDL_GameControllerFromInstanceID(int joyid) {
     return nullptr; // No controller on Android stub
 }
 
@@ -1132,17 +1132,17 @@ inline void SDL_FlushEvents(Uint32 minType, Uint32 maxType) {
     // No-op on Android stub
 }
 
-inline int SDL_GameControllerRumble(void* gamecontroller, Uint16 low_frequency_rumble, 
+inline int SDL_GameControllerRumble(SDL_GameController* gamecontroller, Uint16 low_frequency_rumble, 
                                    Uint16 high_frequency_rumble, Uint32 duration_ms) {
     return -1; // Not supported on Android stub
 }
 
-inline int SDL_GameControllerRumbleTriggers(void* gamecontroller, Uint16 left_rumble, 
+inline int SDL_GameControllerRumbleTriggers(SDL_GameController* gamecontroller, Uint16 left_rumble, 
                                            Uint16 right_rumble, Uint32 duration_ms) {
     return -1; // Not supported on Android stub
 }
 
-inline int SDL_GameControllerSetSensorEnabled(void* gamecontroller, int type, int enabled) {
+inline int SDL_GameControllerSetSensorEnabled(SDL_GameController* gamecontroller, int type, int enabled) {
     return -1; // Not supported on Android stub
 }
 
