@@ -440,18 +440,18 @@ public:
     virtual void smart_touch(CSE_ALifeMonsterAbstract* monster);
     virtual bool used_ai_locations() const /* noexcept */ { return true; };
     virtual CSE_ALifeSmartZone* cast_smart_zone() { return this; };
+    // Smart terrain methods - needed by both xrServerEntities and xrGame
+    virtual bool enabled(CSE_ALifeMonsterAbstract* object) const { return false; };
+    virtual float suitable(CSE_ALifeMonsterAbstract* object) const { return 0.f; };
+    virtual void register_npc(CSE_ALifeMonsterAbstract* object){};
+    virtual void unregister_npc(CSE_ALifeMonsterAbstract* object){};
+    virtual CALifeSmartTerrainTask* task(CSE_ALifeMonsterAbstract* object) { return 0; };
 #ifdef XRGAME_EXPORTS
     virtual bool bfActive();
     virtual CSE_ALifeItemWeapon* tpfGetBestWeapon(ALife::EHitType& tHitType, float& fHitPower);
     virtual CSE_ALifeDynamicObject* tpfGetBestDetector();
     virtual ALife::EMeetActionType tfGetActionType(
         CSE_ALifeSchedulable* tpALifeSchedulable, int iGroupIndex, bool bMutualDetection);
-    // additional functionality
-    virtual bool enabled(CSE_ALifeMonsterAbstract* object) const { return false; };
-    virtual float suitable(CSE_ALifeMonsterAbstract* object) const { return 0.f; };
-    virtual void register_npc(CSE_ALifeMonsterAbstract* object){};
-    virtual void unregister_npc(CSE_ALifeMonsterAbstract* object){};
-    virtual CALifeSmartTerrainTask* task(CSE_ALifeMonsterAbstract* object) { return 0; };
 #endif
     virtual void UPDATE_Read(NET_Packet& P);
     virtual void UPDATE_Write(NET_Packet& P);
