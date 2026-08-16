@@ -792,6 +792,7 @@ inline void SDL_HideWindow(SDL_Window* window) {
 #define SDL_WINDOWEVENT_MOVED 4
 #define SDL_WINDOWEVENT_RESIZED 5
 #define SDL_WINDOWEVENT_SIZE_CHANGED 6
+#define SDL_WINDOWEVENT_CLOSE 14
 #define SDL_WINDOWEVENT_ENTER 11
 #define SDL_WINDOWEVENT_LEAVE 12
 #define SDL_WINDOWEVENT_DISPLAY_CHANGED 13
@@ -802,6 +803,10 @@ inline void SDL_HideWindow(SDL_Window* window) {
 // Keyboard mod state functions
 inline int SDL_GetModState() {
     return 0; // No modifier keys on Android stub
+}
+
+inline void SDL_RaiseWindow(SDL_Window* window) {
+    // No-op on Android stub
 }
 
 inline SDL_Window* SDL_GetWindowFromID(Uint32 id) {
