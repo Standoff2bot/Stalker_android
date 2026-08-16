@@ -1,4 +1,7 @@
 #pragma once
+
+#if defined(XR_PLATFORM_WINDOWS)
+
 #include "XR_IOConsole.h"
 #include "IGame_Level.h"
 
@@ -54,3 +57,5 @@ public:
 }; // class TextConsole
 
 // extern ENGINE_API CTextConsole* TextConsole;
+
+#endif // XR_PLATFORM_WINDOWS
