@@ -286,6 +286,127 @@ typedef struct SDL_Rect {
 } SDL_Rect;
 
 // SDL event structure (minimal stub)
+// SDL Keyboard Event structure
+typedef struct SDL_KeyboardEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 windowID;
+    Uint8 state;
+    Uint8 repeat;
+    Uint8 padding2;
+    Uint8 padding3;
+    int scancode;
+    int sym;
+    Uint16 mod;
+} SDL_KeyboardEvent;
+
+// SDL Mouse Motion Event
+typedef struct SDL_MouseMotionEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 windowID;
+    Uint32 which;
+    Uint32 state;
+    int x;
+    int y;
+    int xrel;
+    int yrel;
+} SDL_MouseMotionEvent;
+
+// SDL Mouse Button Event
+typedef struct SDL_MouseButtonEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 windowID;
+    Uint32 which;
+    Uint8 button;
+    Uint8 state;
+    Uint8 clicks;
+    Uint8 padding1;
+    int x;
+    int y;
+} SDL_MouseButtonEvent;
+
+// SDL Mouse Wheel Event
+typedef struct SDL_MouseWheelEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 windowID;
+    Uint32 which;
+    int x;
+    int y;
+    Uint32 direction;
+} SDL_MouseWheelEvent;
+
+// SDL Text Input Event
+typedef struct SDL_TextInputEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 windowID;
+    char text[32];
+} SDL_TextInputEvent;
+
+// SDL Text Editing Event
+typedef struct SDL_TextEditingEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    Uint32 windowID;
+    char text[32];
+    int start;
+    int length;
+} SDL_TextEditingEvent;
+
+// SDL Controller Axis Event
+typedef struct SDL_ControllerAxisEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    int which;
+    Uint8 axis;
+    Uint8 padding1;
+    Uint8 padding2;
+    Uint8 padding3;
+    int value;
+} SDL_ControllerAxisEvent;
+
+// SDL Controller Button Event
+typedef struct SDL_ControllerButtonEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    int which;
+    Uint8 button;
+    Uint8 state;
+    Uint8 padding1;
+    Uint8 padding2;
+} SDL_ControllerButtonEvent;
+
+// SDL Controller Device Event
+typedef struct SDL_ControllerDeviceEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    int which;
+} SDL_ControllerDeviceEvent;
+
+// SDL Controller Sensor Event
+typedef struct SDL_ControllerSensorEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    int which;
+    int sensor;
+    float data[3];
+} SDL_ControllerSensorEvent;
+
+// SDL Controller Touchpad Event
+typedef struct SDL_ControllerTouchpadEvent {
+    Uint32 type;
+    Uint32 timestamp;
+    int which;
+    int touchpad;
+    int finger;
+    float x;
+    float y;
+    float pressure;
+} SDL_ControllerTouchpadEvent;
+
 // SDL Window Event structure
 typedef struct SDL_WindowEvent {
     Uint32 type;
@@ -311,7 +432,7 @@ typedef struct SDL_DisplayEvent {
     int data1;
 } SDL_DisplayEvent;
 
-// SDL Event union
+// SDL Event union - COMPLETE version with ALL event types
 typedef union SDL_Event {
     Uint32 type;
     struct {
@@ -320,7 +441,18 @@ typedef union SDL_Event {
     } common;
     SDL_WindowEvent window;
     SDL_DisplayEvent display;
-    Uint8 padding[56];
+    SDL_KeyboardEvent key;
+    SDL_TextEditingEvent edit;
+    SDL_TextInputEvent text;
+    SDL_MouseMotionEvent motion;
+    SDL_MouseButtonEvent button;
+    SDL_MouseWheelEvent wheel;
+    SDL_ControllerAxisEvent caxis;
+    SDL_ControllerButtonEvent cbutton;
+    SDL_ControllerDeviceEvent cdevice;
+    SDL_ControllerSensorEvent csensor;
+    SDL_ControllerTouchpadEvent ctouchpad;
+    Uint8 padding[128];
 } SDL_Event;
 
 // SDL system cursor enum
@@ -875,4 +1007,103 @@ inline void SDL_FreeSurface(void* surface) {
 
 inline int SDL_PeepEvents(SDL_Event* events, int numevents, int action, Uint32 minType, Uint32 maxType) {
     return 0; // No events on Android stub
+}
+
+// Add ALL remaining missing SDL constants and functions
+
+// Keyboard and mouse event types
+#define SDL_KEYDOWN 0x300
+#define SDL_KEYUP 0x301
+#define SDL_TEXTEDITING 0x302
+#define SDL_TEXTINPUT 0x303
+#define SDL_KEYMAPCHANGED 0x304
+#define SDL_MOUSEMOTION 0x400
+#define SDL_MOUSEBUTTONDOWN 0x401
+#define SDL_MOUSEBUTTONUP 0x402
+#define SDL_MOUSEWHEEL 0x403
+
+// Controller event types
+#define SDL_CONTROLLERAXISMOTION 0x650
+#define SDL_CONTROLLERBUTTONDOWN 0x651
+#define SDL_CONTROLLERBUTTONUP 0x652
+#define SDL_CONTROLLERDEVICEADDED 0x653
+#define SDL_CONTROLLERDEVICEREMOVED 0x654
+#define SDL_CONTROLLERDEVICEREMAPPED 0x655
+#define SDL_CONTROLLERTOUCHPADUP 0x658
+#define SDL_CONTROLLERSENSORUPDATE 0x659
+
+// Event peek constants
+#define SDL_PEEKEVENT 2
+
+// Sensor types
+#define SDL_SENSOR_GYRO 1
+
+// Joystick constants
+#define SDL_JOYSTICK_AXIS_MAX 6
+
+// Scancode type
+typedef int SDL_Scancode;
+
+// Hints
+#define SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4 "SDL_WINDOWS_NO_CLOSE_ON_ALT_F4"
+
+// Mouse and keyboard functions
+inline int SDL_GetMouseState(int* x, int* y) {
+    if (x) *x = 0;
+    if (y) *y = 0;
+    return 0;
+}
+
+inline void SDL_StartTextInput() {
+    // No-op on Android stub
+}
+
+inline int SDL_SetRelativeMouseMode(int enabled) {
+    return 0; // Success stub
+}
+
+inline void SDL_WarpMouseInWindow(SDL_Window* window, int x, int y) {
+    // No-op on Android stub
+}
+
+inline void SDL_SetWindowGrab(SDL_Window* window, int grabbed) {
+    // No-op on Android stub
+}
+
+inline int SDL_ShowCursor(int toggle) {
+    return 1; // Always shown
+}
+
+// Cursor functions
+inline void* SDL_CreateSystemCursor(int id) {
+    return nullptr; // No cursor on Android stub
+}
+
+inline void SDL_SetCursor(void* cursor) {
+    // No-op on Android stub
+}
+
+inline void SDL_FreeCursor(void* cursor) {
+    // No-op on Android stub
+}
+
+// Game controller functions
+inline int SDL_NumJoysticks() {
+    return 0; // No joysticks on Android stub
+}
+
+inline int SDL_IsGameController(int device_index) {
+    return 0; // Not a controller
+}
+
+inline void* SDL_GameControllerOpen(int device_index) {
+    return nullptr; // No controller on Android stub
+}
+
+inline void SDL_GameControllerClose(void* gamecontroller) {
+    // No-op on Android stub
+}
+
+inline void* SDL_GameControllerFromInstanceID(int joyid) {
+    return nullptr; // No controller on Android stub
 }
