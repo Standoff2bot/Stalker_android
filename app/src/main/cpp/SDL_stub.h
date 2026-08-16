@@ -800,9 +800,16 @@ inline void SDL_HideWindow(SDL_Window* window) {
 // Hints
 #define SDL_HINT_GRAB_KEYBOARD "SDL_GRAB_KEYBOARD"
 
+// Keyboard modifier flags
+#define KMOD_CAPS 0x2000
+
 // Keyboard mod state functions
 inline int SDL_GetModState() {
     return 0; // No modifier keys on Android stub
+}
+
+inline const char* SDL_GetHint(const char* name) {
+    return nullptr; // No hints on Android stub
 }
 
 inline void SDL_RaiseWindow(SDL_Window* window) {
