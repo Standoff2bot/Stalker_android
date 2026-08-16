@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Engine.h"
 #include "xrCommon/xr_map.h"
 #include "xrCore/xrstring.h"
 #include "xrCore/xr_token.h"
