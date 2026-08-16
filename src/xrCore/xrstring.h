@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cctype>
 
 #include "xr_types.h"
 #include "xrMemory.h"
@@ -230,6 +231,17 @@ IC int xr_strcmp(const shared_str& a, const shared_str& b) noexcept
         return 0;
     else
         return xr_strcmp(a.c_str(), b.c_str());
+}
+
+IC char* xr_strupr(char* src)
+{
+    size_t i = 0;
+    while (src[i])
+    {
+        src[i] = (char)toupper(src[i]);
+        i++;
+    }
+    return src;
 }
 
 IC char* xr_strlwr(char* src)

@@ -97,19 +97,6 @@
     (radix == 10 ? sprintf(buffer, "%d", value) : \
      radix == 16 ? sprintf(buffer, "%x", value) : \
      sprintf(buffer, "%d", value), buffer)
-
-// Android Bionic doesn't have strupr/strlwr - inline implementations
-inline char* xr_strupr(char* str) {
-    if (!str) return str;
-    for (char* p = str; *p; ++p) *p = toupper((unsigned char)*p);
-    return str;
-}
-
-inline char* xr_strlwr(char* str) {
-    if (!str) return str;
-    for (char* p = str; *p; ++p) *p = tolower((unsigned char)*p);
-    return str;
-}
 #else
 #define xr_strupr strupr
 #define xr_strlwr strlwr
