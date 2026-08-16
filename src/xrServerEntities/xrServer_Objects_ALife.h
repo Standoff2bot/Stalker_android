@@ -19,11 +19,13 @@
 #pragma warning(push)
 #pragma warning(disable : 4005)
 
+// Forward declarations needed by smart terrain methods (outside XRGAME_EXPORTS)
+class CALifeSmartTerrainTask;
+class CALifeMonsterAbstract;
+
 #ifdef XRGAME_EXPORTS
 class CALifeSimulator;
-class CALifeSmartTerrainTask;
 #endif //#ifdef XRGAME_EXPORTS
-class CALifeMonsterAbstract;
 
 class CSE_ALifeItemWeapon;
 class CSE_ALifeDynamicObject;
