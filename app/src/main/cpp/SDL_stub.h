@@ -804,10 +804,6 @@ inline int SDL_GetModState() {
     return 0; // No modifier keys on Android stub
 }
 
-inline Uint32 SDL_GetWindowFlags(SDL_Window* window) {
-    return 0; // Return no flags on Android stub
-}
-
 inline SDL_Window* SDL_GetWindowFromID(Uint32 id) {
     return nullptr; // No window lookup on Android stub
 }
