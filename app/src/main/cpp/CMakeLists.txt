@@ -117,6 +117,7 @@ file(GLOB_RECURSE XRENGINE_SOURCES ${XRAY_SRC}/xrEngine/*.cpp)
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*xrRender.*")
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*Device_create.*")
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*Text_Console.*")
+list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*tntQAVI.*")
 add_library(xrEngine STATIC ${XRENGINE_SOURCES})
 target_link_libraries(xrEngine PRIVATE
     xrCore

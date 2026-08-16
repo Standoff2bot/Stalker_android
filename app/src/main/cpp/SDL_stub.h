@@ -792,16 +792,49 @@ inline void SDL_HideWindow(SDL_Window* window) {
 #define SDL_WINDOWEVENT_MOVED 4
 #define SDL_WINDOWEVENT_RESIZED 5
 #define SDL_WINDOWEVENT_SIZE_CHANGED 6
+#define SDL_WINDOWEVENT_MINIMIZED 7
+#define SDL_WINDOWEVENT_MAXIMIZED 8
+#define SDL_WINDOWEVENT_RESTORED 9
+#define SDL_WINDOWEVENT_SHOWN 1
+#define SDL_WINDOWEVENT_HIDDEN 2
+#define SDL_WINDOWEVENT_FOCUS_GAINED 10
+#define SDL_WINDOWEVENT_FOCUS_LOST 11
 #define SDL_WINDOWEVENT_CLOSE 14
 #define SDL_WINDOWEVENT_ENTER 11
 #define SDL_WINDOWEVENT_LEAVE 12
 #define SDL_WINDOWEVENT_DISPLAY_CHANGED 13
+
+// Window position constant
+#define SDL_WINDOWPOS_CENTERED 0x2FFF0000
+
+// Window flags (add to existing)
+#define SDL_WINDOW_ALWAYS_ON_TOP 0x00008000
+
+// Init flags
+#define SDL_INIT_VIDEO 0x00000020
+#define SDL_INIT_GAMECONTROLLER 0x00002000
+
+// Event types (add to existing)
+#define SDL_GETEVENT 0x800
 
 // Hints
 #define SDL_HINT_GRAB_KEYBOARD "SDL_GRAB_KEYBOARD"
 
 // Keyboard modifier flags
 #define KMOD_CAPS 0x2000
+
+// SDL initialization and quit functions
+inline int SDL_Init(Uint32 flags) {
+    return 0; // Success stub
+}
+
+inline void SDL_Quit() {
+    // No-op on Android stub
+}
+
+inline int SDL_QuitRequested() {
+    return 0; // Not quitting
+}
 
 // Keyboard mod state functions
 inline int SDL_GetModState() {
@@ -810,6 +843,18 @@ inline int SDL_GetModState() {
 
 inline const char* SDL_GetHint(const char* name) {
     return nullptr; // No hints on Android stub
+}
+
+inline void SDL_StopTextInput() {
+    // No-op on Android stub
+}
+
+inline void* SDL_GetWindowSurface(SDL_Window* window) {
+    return nullptr; // No surface on Android stub
+}
+
+inline void SDL_UpdateWindowSurface(SDL_Window* window) {
+    // No-op on Android stub
 }
 
 inline void SDL_RaiseWindow(SDL_Window* window) {
