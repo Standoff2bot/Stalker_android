@@ -864,3 +864,15 @@ inline void SDL_RaiseWindow(SDL_Window* window) {
 inline SDL_Window* SDL_GetWindowFromID(Uint32 id) {
     return nullptr; // No window lookup on Android stub
 }
+
+inline int SDL_BlitSurface(void* src, void* srcrect, void* dst, void* dstrect) {
+    return 0; // No-op on Android stub
+}
+
+inline void SDL_FreeSurface(void* surface) {
+    // No-op on Android stub
+}
+
+inline int SDL_PeepEvents(SDL_Event* events, int numevents, int action, Uint32 minType, Uint32 maxType) {
+    return 0; // No events on Android stub
+}

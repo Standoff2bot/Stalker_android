@@ -32,8 +32,10 @@ add_compile_definitions(
 )
 
 # Force include our SDL stub before any SDL.h includes
+# Add -ferror-limit=0 to see ALL errors at once (not just first 20)
 add_compile_options(
     -include ${CMAKE_CURRENT_SOURCE_DIR}/SDL_stub.h
+    -ferror-limit=0
 )
 
 # Include directories
@@ -94,6 +96,7 @@ target_compile_options(xrCore PRIVATE
     -Wno-deprecated-declarations
     -fno-strict-aliasing
     -fexceptions
+    -ferror-limit=0
 )
 
 # xrCDB - collision detection
