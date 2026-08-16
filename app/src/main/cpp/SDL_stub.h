@@ -281,8 +281,8 @@ typedef uint8_t Uint8;
 #define SDL_NUM_SYSTEM_CURSORS 11
 
 // Forward declarations for SDL types (minimal stubs)
-typedef void* SDL_GameController;
-typedef void* SDL_Cursor;
+struct SDL_GameController;
+struct SDL_Cursor;
 struct SDL_Window;
 
 // SDL rectangle structure
