@@ -293,6 +293,14 @@ typedef struct SDL_Rect {
 
 // SDL event structure (minimal stub)
 // SDL Keyboard Event structure
+// SDL Keysym structure
+typedef struct SDL_Keysym {
+    int scancode;
+    int sym;
+    Uint16 mod;
+    Uint32 unused;
+} SDL_Keysym;
+
 typedef struct SDL_KeyboardEvent {
     Uint32 type;
     Uint32 timestamp;
@@ -301,9 +309,7 @@ typedef struct SDL_KeyboardEvent {
     Uint8 repeat;
     Uint8 padding2;
     Uint8 padding3;
-    int scancode;
-    int sym;
-    Uint16 mod;
+    SDL_Keysym keysym;
 } SDL_KeyboardEvent;
 
 // SDL Mouse Motion Event
@@ -342,6 +348,8 @@ typedef struct SDL_MouseWheelEvent {
     int x;
     int y;
     Uint32 direction;
+    float preciseX;
+    float preciseY;
 } SDL_MouseWheelEvent;
 
 // SDL Text Input Event
@@ -1113,3 +1121,36 @@ inline void SDL_GameControllerClose(void* gamecontroller) {
 inline void* SDL_GameControllerFromInstanceID(int joyid) {
     return nullptr; // No controller on Android stub
 }
+
+// Additional SDL functions for xrEngine compatibility
+
+inline void SDL_FlushEvent(Uint32 type) {
+    // No-op on Android stub
+}
+
+inline void SDL_FlushEvents(Uint32 minType, Uint32 maxType) {
+    // No-op on Android stub
+}
+
+inline int SDL_GameControllerRumble(void* gamecontroller, Uint16 low_frequency_rumble, 
+                                   Uint16 high_frequency_rumble, Uint32 duration_ms) {
+    return -1; // Not supported on Android stub
+}
+
+inline int SDL_GameControllerRumbleTriggers(void* gamecontroller, Uint16 left_rumble, 
+                                           Uint16 right_rumble, Uint32 duration_ms) {
+    return -1; // Not supported on Android stub
+}
+
+inline int SDL_GameControllerSetSensorEnabled(void* gamecontroller, int type, int enabled) {
+    return -1; // Not supported on Android stub
+}
+
+inline int SDL_GetKeyFromScancode(int scancode) {
+    return scancode; // Direct mapping on Android stub
+}
+
+inline int SDL_SetHint(const char* name, const char* value) {
+    return 0; // No-op on Android stub
+}
+
