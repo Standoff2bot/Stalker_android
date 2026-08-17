@@ -163,6 +163,8 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*MathUtils.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ObjectDump.*")
 # Exclude rats AI (legacy/old AI code with missing dependencies)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*/rats/.*")
+# Exclude ALife offline simulation (47 files, complex system with XRGAME_EXPORTS dependencies)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*alife_.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
