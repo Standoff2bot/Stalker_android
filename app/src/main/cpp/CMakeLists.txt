@@ -161,6 +161,8 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MainMenu|RegistryFuncs).*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*MathUtils.*")
 # Exclude ObjectDump (debug-only code with CObject dependencies, uses Fbox instead of Fbox3)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ObjectDump.*")
+# Exclude rats AI (legacy/old AI code with missing dependencies)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*/rats/.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
