@@ -4,6 +4,7 @@
 #include "xrEngine/XR_IOConsole.h"
 #include "xrEngine/xr_ioc_cmd.h"
 
+#ifndef ANDROID
 class CCC_CreateGameSpyAccount : public IConsole_Command
 {
 public:

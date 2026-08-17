@@ -52,8 +52,10 @@ private:
     void CDKey_ShutDown();
     void SendChallengeString_2_Client(IClient* C);
 
+#ifndef ANDROID
     CGameSpy_GCD_Server m_GCDServer;
     CGameSpy_QR2 m_QR2;
+#endif
     int iGameSpyBasePort;
 
 protected:
@@ -70,10 +72,12 @@ public:
     bool m_bCheckCDKey;
 
     int GetPlayersCount();
+#ifndef ANDROID
     void OnCDKey_Validation(int LocalID, int res, char* errormsg);
     void OnCDKey_ReValidation(int LocalID, int hint, char* challenge);
     CGameSpy_QR2* QR2() { return &m_QR2; };
     CGameSpy_GCD_Server* GCD_Server() { return &m_GCDServer; }
+#endif
     virtual bool HasPassword();
     virtual bool HasProtected();
 
@@ -93,5 +97,7 @@ public:
 
     virtual u32 OnMessage(
         NET_Packet& P, ClientID /*DPNID*/ sender); // Non-Zero means broadcasting with "flags" as returned
+#ifndef ANDROID
     virtual void OnError_Add(qr2_error_t error){};
+#endif
 };
