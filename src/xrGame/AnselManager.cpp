@@ -186,6 +186,7 @@ bool AnselCameraEffector::ProcessCam(SCamEffectorInfo& info)
 {
     info.dont_apply = false;
 
+#ifdef XR_PLATFORM_WINDOWS
     static ansel::Camera camera;
     static nv::Vec3 right = { info.r.x, info.r.y, info.r.z };
     static nv::Vec3 up = { info.n.x, info.n.y, info.n.z };
@@ -219,6 +220,7 @@ bool AnselCameraEffector::ProcessCam(SCamEffectorInfo& info)
     info.d.set(forward.x, forward.y, forward.z);
     info.n.set(up.x, up.y, up.z);
     info.r.set(right.x, right.y, right.z);
+#endif
 
     return TRUE;
 }
