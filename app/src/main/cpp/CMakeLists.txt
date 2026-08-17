@@ -155,6 +155,8 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MPPlayersBag).*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MainMenu|RegistryFuncs).*")
 # Exclude MathUtils (test/debug code with API incompatibilities)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*MathUtils.*")
+# Exclude ObjectDump (debug-only code with CObject dependencies, uses Fbox instead of Fbox3)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ObjectDump.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
