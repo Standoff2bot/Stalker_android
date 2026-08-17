@@ -325,6 +325,16 @@ class CSE_ALifeMonsterAbstract : public CSE_ALifeCreatureAbstract,
 #endif
 
 public:
+    // Movement manager holder fields - needed by both server and game
+    GameGraph::_GRAPH_ID m_tNextGraphID;
+    GameGraph::_GRAPH_ID m_tPrevGraphID;
+    float m_fGoingSpeed;
+    float m_fCurrentLevelGoingSpeed;
+    float m_fCurSpeed;
+    float m_fDistanceFromPoint;
+    float m_fDistanceToPoint;
+    GameGraph::TERRAIN_VECTOR m_tpaTerrain;
+
     float m_fMaxHealthValue;
     float m_fRetreatThreshold;
     float m_fEyeRange;
@@ -721,6 +731,16 @@ class CSE_ALifeOnlineOfflineGroup : public CSE_ALifeDynamicObject,
 #endif
 
 public:
+    // Movement manager holder fields - needed by both server and game
+    GameGraph::_GRAPH_ID m_tNextGraphID;
+    GameGraph::_GRAPH_ID m_tPrevGraphID;
+    float m_fGoingSpeed;
+    float m_fCurrentLevelGoingSpeed;
+    float m_fCurSpeed;
+    float m_fDistanceFromPoint;
+    float m_fDistanceToPoint;
+    GameGraph::TERRAIN_VECTOR m_tpaTerrain;
+
     CSE_ALifeOnlineOfflineGroup(LPCSTR caSection);
     virtual ~CSE_ALifeOnlineOfflineGroup();
     virtual CSE_Abstract* base();
