@@ -61,6 +61,7 @@ include_directories(
     ${XRAY_EXTERNALS}/luabind
     ${XRAY_EXTERNALS}/sse2neon
     ${XRAY_EXTERNALS}/imgui
+    ${XRAY_EXTERNALS}/ode/include
     ${XRAY_EXTERNALS}
     ${XRAY_SDK}/include
 )
