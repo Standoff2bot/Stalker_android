@@ -7,6 +7,7 @@
 #include "queued_async_method.h"
 //#include "xrGameSpy/xrGameSpy.h" // Hell no!
 
+#ifndef ANDROID
 class CGameSpy_GP;
 extern "C"
 {
@@ -135,6 +136,7 @@ private:
     DECLARE_SCRIPT_REGISTER_FUNCTION();
 }; // class account_manager
 } // namespace gamespy_gp
+#endif // ANDROID
 
 // XXX: review and remove
 //typedef gamespy_gp::account_manager gamespy_gp_account_manager;

@@ -219,7 +219,9 @@ private:
     xr_string m_sConnectResult;
 
 public:
+#ifndef ANDROID
     void OnGameSpyChallenge(NET_Packet* P);
+#endif
     void OnBuildVersionChallenge();
     void OnConnectResult(NET_Packet* P);
     // Static particles

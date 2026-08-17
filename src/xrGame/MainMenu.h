@@ -4,8 +4,10 @@ class CUIWindow;
 class CUIDialogWnd;
 class CUICursor;
 class CUIMessageBoxEx;
+#ifndef ANDROID
 class CGameSpy_HTTP;
 class CGameSpy_Full;
+#endif
 
 class demo_info_loader;
 
@@ -17,6 +19,7 @@ class demo_info_loader;
 #include "DemoInfo.h"
 #include "ai_space.h"
 
+#ifndef ANDROID
 namespace gamespy_gp
 {
 class account_manager;
@@ -27,6 +30,7 @@ namespace gamespy_profile
 {
 class profile_store;
 } // namespace gamespy_profile
+#endif
 
 struct Patch_Dawnload_Progress
 {
@@ -69,10 +73,12 @@ class CMainMenu : public IMainMenu,
 
     xr_vector<CUIWindow*> m_pp_draw_wnds;
 
+#ifndef ANDROID
     CGameSpy_Full* m_pGameSpyFull{};
     gamespy_gp::account_manager* m_account_mngr{};
     gamespy_gp::login_manager* m_login_mngr{};
     gamespy_profile::profile_store* m_profile_store{};
+#endif
 
     demo_info_loader* m_demo_info_loader;
 
@@ -101,11 +107,13 @@ public:
     Patch_Dawnload_Progress m_sPDProgress;
     Patch_Dawnload_Progress* GetPatchProgress() { return &m_sPDProgress; }
     void CancelDownload();
+#ifndef ANDROID
     gamespy_gp::account_manager* GetAccountMngr() { return m_account_mngr; }
     gamespy_gp::login_manager* GetLoginMngr() { return m_login_mngr; }
     gamespy_profile::profile_store* GetProfileStore() { return m_profile_store; }
 
     CGameSpy_Full* GetGS() const { return m_pGameSpyFull; }
+#endif
 
 protected:
     EErrorDlg m_NeedErrDialog;
