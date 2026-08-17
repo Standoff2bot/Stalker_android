@@ -21,14 +21,18 @@ void CSE_ALifeTraderAbstract::script_register(lua_State* luaState)
     [
         class_<CSE_ALifeTraderAbstract>("cse_alife_trader_abstract")
             //			.def(		constructor<pcstr>())
+#ifdef XRGAME_EXPORTS
             .def("community", &CSE_ALifeTraderAbstract::CommunityName)
+#endif
             .def("profile_name", +[](CSE_ALifeTraderAbstract* ta) { return ta->character_profile().c_str(); })
             .def("set_profile_name", +[](CSE_ALifeTraderAbstract* ta, const pcstr str) { ta->set_character_profile(str); })
             .def("character_name", +[](CSE_ALifeTraderAbstract* ta) { return ta->m_character_name.c_str(); })
             .def("set_character_name", +[](CSE_ALifeTraderAbstract* ta, const pcstr str) { ta->m_character_name = str; })
+#ifdef XRGAME_EXPORTS
             .def("rank", &CSE_ALifeTraderAbstract::Rank)
             .def("set_rank", &CSE_ALifeTraderAbstract::SetRank)
             .def("reputation", &CSE_ALifeTraderAbstract::Reputation)
+#endif
             .def("character_icon", +[](CSE_ALifeTraderAbstract* ta)
             {
                 ta->specific_character();
