@@ -760,6 +760,13 @@ public:
 private:
     MEMBERS m_members;
 
+public:
+    // Commander ID accessor - returns -1 (no commander) for now
+    IC ALife::_OBJECT_ID commander_id() const
+    {
+        return (ALife::_OBJECT_ID)(-1);
+    }
+
 #ifdef XRGAME_EXPORTS
 
 private:
@@ -770,12 +777,6 @@ public:
     {
         VERIFY(m_brain);
         return (*m_brain);
-    }
-
-    // Commander ID accessor - returns -1 (no commander) for now
-    IC ALife::_OBJECT_ID commander_id() const
-    {
-        return (ALife::_OBJECT_ID)(-1);
     }
 
 public:
