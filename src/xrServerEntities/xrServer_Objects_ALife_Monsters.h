@@ -772,6 +772,12 @@ public:
         return (*m_brain);
     }
 
+    // Commander ID accessor - returns -1 (no commander) for now
+    IC ALife::_OBJECT_ID commander_id() const
+    {
+        return (ALife::_OBJECT_ID)(-1);
+    }
+
 public:
     virtual CSE_ALifeItemWeapon* tpfGetBestWeapon(ALife::EHitType& tHitType, float& fHitPower);
     virtual ALife::EMeetActionType tfGetActionType(
