@@ -1,8 +1,10 @@
 #pragma once
 
 #include "xrServer.h"
+#ifndef ANDROID
 #include "xrGameSpy/GameSpy_GCD_Server.h"
 #include "xrGameSpy/GameSpy_QR2.h"
+#endif
 
 class xrGameSpyClientData : public xrClientData
 {

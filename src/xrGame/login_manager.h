@@ -3,7 +3,9 @@
 
 #include "Common/Noncopyable.hpp"
 #include "mixed_delegate.h"
+#ifndef ANDROID
 #include "xrGameSpy/xrGameSpy.h"
+#endif
 #include "account_manager.h"
 #include "queued_async_method.h"
 
