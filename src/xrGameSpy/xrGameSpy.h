@@ -1,5 +1,6 @@
 #pragma once
 
+#ifndef ANDROID
 #include <GameSpy/common/gsCommon.h>
 #include <GameSpy/common/gsAvailable.h>
 #include <GameSpy/ghttp/ghttp.h>
@@ -46,3 +47,4 @@ XRGAMESPY_API void GetGameID(int* GameID, int verID);
 #undef recvfrom
 #undef sendto
 #undef setsockopt
+#endif // ANDROID

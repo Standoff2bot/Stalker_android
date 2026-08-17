@@ -9,7 +9,9 @@
 #include "xrUICore/EditBox/UIEditBox.h"
 #include "xrUICore/Buttons/UI3tButton.h"
 #include "mixed_delegate.h"
+#ifndef ANDROID
 #include "xrGameSpy/GameSpy_BrowsersWrapper.h"
+#endif
 
 class CUIXml;
 class CUIMessageBoxEx;
