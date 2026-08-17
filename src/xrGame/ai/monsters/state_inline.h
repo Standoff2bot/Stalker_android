@@ -50,8 +50,9 @@ void CStateAbstract::execute()
     {
         reselect_state();
 
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(ANDROID)
         // Lain: added
+        // Disabled on Android: CBaseMonster incomplete type issue
         if (current_substate == u32(-1))
         {
             debug::text_tree tree;
