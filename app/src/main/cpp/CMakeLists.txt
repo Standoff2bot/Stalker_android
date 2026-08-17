@@ -141,6 +141,10 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ui/.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*UI.*")
 # Exclude DynamicHeightMap (uses old RAPID collision API, not used in game)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*DynamicHeightMap.*")
+# Exclude LevelFogOfWar (depends on UI which is excluded)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*LevelFogOfWar.*")
+# Exclude GameSpy multiplayer (not needed for single-player Android port)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*GameSpy.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
