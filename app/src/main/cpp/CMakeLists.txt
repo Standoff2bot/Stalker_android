@@ -139,6 +139,8 @@ file(GLOB_RECURSE XRGAME_SOURCES ${XRAY_SRC}/xrGame/*.cpp)
 # Exclude UI for now (complex dependency)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ui/.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*UI.*")
+# Exclude DynamicHeightMap (uses old RAPID collision API, not used in game)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*DynamicHeightMap.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
