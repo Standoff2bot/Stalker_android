@@ -17,6 +17,7 @@ add_compile_definitions(
     _LINUX
     XR_PLATFORM_LINUX
     XRAY_STATIC_BUILD
+    dSINGLE  # ODE physics engine: use single-precision floats
 )
 
 # Build configuration (needed for Platform.hpp line 108 check)
