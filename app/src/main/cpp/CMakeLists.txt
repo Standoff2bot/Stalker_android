@@ -152,6 +152,8 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*_mp_.*")
 # Exclude multiplayer-related files
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(account_manager|login_manager|ServerList|xrServer_C).*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(game_cl_mp|game_sv_mp|game_sv_base|console_commands_mp).*")
+# Exclude ALL multiplayer game modes (deathmatch, teamdeathmatch, artefacthunt, capture_the_artefact)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(deathmatch|teamdeathmatch|artefacthunt|capture_the_artefact).*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MPPlayersBag).*")
 # Exclude MainMenu and Registry (depend on GameSpy for multiplayer features)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MainMenu|RegistryFuncs).*")
