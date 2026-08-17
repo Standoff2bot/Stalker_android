@@ -163,10 +163,14 @@ protected:
     u32 m_need_refresh_fr;
     void RefreshList_internal();
 
+#ifndef ANDROID
     CGameSpy_BrowsersWrapper::SubscriberIdx m_subscriber_id;
+#endif
 
 private:
     connect_error_cb m_connect_cb;
+#ifndef ANDROID
     static inline CGameSpy_BrowsersWrapper* browser_LL();
     static inline CGameSpy_BrowsersWrapper& browser();
+#endif
 };
