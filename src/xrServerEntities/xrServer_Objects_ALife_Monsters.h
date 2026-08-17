@@ -313,12 +313,16 @@ private:
 };
 
 class CSE_ALifeMonsterAbstract : public CSE_ALifeCreatureAbstract,
-                                 public CSE_ALifeSchedulable,
-                                 public CMovementManagerHolder
+                                 public CSE_ALifeSchedulable
+#ifdef XRGAME_EXPORTS
+                                 , public CMovementManagerHolder
+#endif
 {
     using inherited1 = CSE_ALifeCreatureAbstract;
     using inherited2 = CSE_ALifeSchedulable;
+#ifdef XRGAME_EXPORTS
     using inherited3 = CMovementManagerHolder;
+#endif
 
 public:
     float m_fMaxHealthValue;
@@ -705,12 +709,16 @@ private:
 };
 
 class CSE_ALifeOnlineOfflineGroup : public CSE_ALifeDynamicObject,
-                                    public CSE_ALifeSchedulable,
-                                    public CMovementManagerHolder
+                                    public CSE_ALifeSchedulable
+#ifdef XRGAME_EXPORTS
+                                    , public CMovementManagerHolder
+#endif
 {
     using inherited1 = CSE_ALifeDynamicObject;
     using inherited2 = CSE_ALifeSchedulable;
+#ifdef XRGAME_EXPORTS
     using inherited3 = CMovementManagerHolder;
+#endif
 
 public:
     CSE_ALifeOnlineOfflineGroup(LPCSTR caSection);
