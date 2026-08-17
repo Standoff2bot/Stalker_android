@@ -145,6 +145,8 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*DynamicHeightMap.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*LevelFogOfWar.*")
 # Exclude GameSpy multiplayer (not needed for single-player Android port)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*GameSpy.*")
+# Exclude network files (depend on GameSpy, not needed for single-player)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*_network_.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
