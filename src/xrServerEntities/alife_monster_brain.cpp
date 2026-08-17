@@ -36,7 +36,9 @@ CALifeMonsterBrain::CALifeMonsterBrain(object_type* object)
     m_last_search_time = 0;
     m_smart_terrain = nullptr;
 
+#ifdef XRGAME_EXPORTS
     m_movement_manager = xr_new<CALifeMonsterMovementManager>(object);
+#endif
 
     u32 hours, minutes, seconds;
     sscanf(pSettings->r_string(this->object().name(), "smart_terrain_choose_interval"), "%d:%d:%d", &hours, &minutes,
@@ -48,7 +50,9 @@ CALifeMonsterBrain::CALifeMonsterBrain(object_type* object)
 
 CALifeMonsterBrain::~CALifeMonsterBrain()
 {
+#ifdef XRGAME_EXPORTS
     xr_delete(m_movement_manager);
+#endif
 }
 
 void CALifeMonsterBrain::on_state_write(NET_Packet& /*packet*/) {}
@@ -79,8 +83,10 @@ void CALifeMonsterBrain::process_task()
 {
     CALifeSmartTerrainTask* task = smart_terrain().task(&object());
     THROW3(task, "smart terrain returned nil task, while npc is registered in it", smart_terrain().name_replace());
+#ifdef XRGAME_EXPORTS
     movement().path_type(MovementManager::ePathTypeGamePath);
     movement().detail().target(*task);
+#endif
 }
 
 void CALifeMonsterBrain::select_task(const bool forced)
@@ -142,9 +148,28 @@ void CALifeMonsterBrain::update(const bool forced)
     else
         default_behaviour();
 
+#ifdef XRGAME_EXPORTS
     movement().update();
+#endif
 }
 
-void CALifeMonsterBrain::default_behaviour() { movement().path_type(MovementManager::ePathTypeNoPath); }
-void CALifeMonsterBrain::on_switch_online() { movement().on_switch_online(); }
-void CALifeMonsterBrain::on_switch_offline() { movement().on_switch_offline(); }
+void CALifeMonsterBrain::default_behaviour()
+{
+#ifdef XRGAME_EXPORTS
+    movement().path_type(MovementManager::ePathTypeNoPath);
+#endif
+}
+
+void CALifeMonsterBrain::on_switch_online()
+{
+#ifdef XRGAME_EXPORTS
+    movement().on_switch_online();
+#endif
+}
+
+void CALifeMonsterBrain::on_switch_offline()
+{
+#ifdef XRGAME_EXPORTS
+    movement().on_switch_offline();
+#endif
+}

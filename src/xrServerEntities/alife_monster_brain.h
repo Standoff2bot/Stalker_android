@@ -25,7 +25,9 @@ public:
 
 private:
     object_type* m_object;
+#ifdef XRGAME_EXPORTS
     movement_manager_type* m_movement_manager;
+#endif
     bool m_can_choose_alife_tasks;
 
 public:
