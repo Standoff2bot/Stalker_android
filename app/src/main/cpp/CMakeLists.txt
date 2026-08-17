@@ -147,6 +147,11 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*LevelFogOfWar.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*GameSpy.*")
 # Exclude network files (depend on GameSpy, not needed for single-player)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*_network_.*")
+# Exclude multiplayer-related files
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(account_manager|login_manager|ServerList|xrServer_C).*")
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(game_cl_mp|game_sv_mp|game_sv_base|console_commands_mp).*")
+# Exclude MainMenu and Registry (depend on GameSpy for multiplayer features)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MainMenu|RegistryFuncs).*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
