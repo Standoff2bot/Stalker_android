@@ -56,10 +56,12 @@ public:
     bool m_deadbody_can_take;
     bool m_deadbody_closed;
 
+    // Community method needed by relation_registry.cpp (xrGame) - must be available in all compilation contexts
+    CHARACTER_COMMUNITY_INDEX Community() const;
+
 #ifdef XRGAME_EXPORTS
     //для работы с relation system
     u16 object_id() const;
-    CHARACTER_COMMUNITY_INDEX Community() const;
     LPCSTR CommunityName() const;
     CHARACTER_RANK_VALUE Rank();
     CHARACTER_REPUTATION_VALUE Reputation();
