@@ -165,6 +165,8 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ObjectDump.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*/rats/.*")
 # Exclude ALife offline simulation (47 files, complex system with XRGAME_EXPORTS dependencies)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*alife_.*")
+# Exclude evaluation functions (ef_* files - depend on ALife system)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ef_.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
