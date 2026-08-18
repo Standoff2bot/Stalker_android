@@ -58,13 +58,14 @@ public:
 
     // Community method needed by relation_registry.cpp (xrGame) - must be available in all compilation contexts
     CHARACTER_COMMUNITY_INDEX Community() const;
+    // Relation system methods needed by relation_registry_inline.h - must be available in all contexts
+    u16 object_id() const;
+    CHARACTER_RANK_VALUE Rank();
+    CHARACTER_REPUTATION_VALUE Reputation();
 
 #ifdef XRGAME_EXPORTS
     //для работы с relation system
-    u16 object_id() const;
     LPCSTR CommunityName() const;
-    CHARACTER_RANK_VALUE Rank();
-    CHARACTER_REPUTATION_VALUE Reputation();
     void SetRank(CHARACTER_RANK_VALUE val);
 
 #endif

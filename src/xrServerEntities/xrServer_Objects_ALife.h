@@ -180,9 +180,10 @@ public:
     virtual void spawn_supplies(LPCSTR);
     virtual void spawn_supplies();
     CALifeSimulator& alife() const;
-    virtual Fvector draw_level_position() const;
     virtual bool keep_saved_data_anyway() const /* noexcept */;
 #endif
+    // draw_level_position needed by map_location.cpp - must be available in all contexts
+    virtual Fvector draw_level_position() const;
     virtual void UPDATE_Read(NET_Packet& P);
     virtual void UPDATE_Write(NET_Packet& P);
     virtual void STATE_Read(NET_Packet& P, u16 size);
