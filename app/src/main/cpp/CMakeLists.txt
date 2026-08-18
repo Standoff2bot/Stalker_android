@@ -147,11 +147,17 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*LevelFogOfWar.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*GameSpy.*")
 # Exclude network files (depend on GameSpy, not needed for single-player)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*_network_.*")
+# Exclude Actor network code
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*Actor_Network.*")
 # Exclude ALL multiplayer files (*_mp_* pattern catches actor_mp_server, etc.)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*_mp_.*")
 # Exclude multiplayer-related files
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(account_manager|login_manager|ServerList|xrServer_C).*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(game_cl_mp|game_sv_mp|game_sv_base|console_commands_mp).*")
+# Exclude player profiles and account system (depend on GameSpy/multiplayer)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(player_account|profile_store|profile_data_types).*")
+# Exclude Level GameSpy and network functions
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(Level_GameSpy|xrGameSpy|Level_network).*")
 # Exclude ALL multiplayer game modes (deathmatch, teamdeathmatch, artefacthunt, capture_the_artefact)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(deathmatch|teamdeathmatch|artefacthunt|capture_the_artefact).*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*(MPPlayersBag).*")
