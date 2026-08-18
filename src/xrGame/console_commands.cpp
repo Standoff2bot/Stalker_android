@@ -45,7 +45,9 @@
 #include "character_hit_animations_params.h"
 #include "inventory_upgrade_manager.h"
 
+#ifndef ANDROID
 #include "xrGameSpy/GameSpy_Full.h"
+#endif
 
 #include "ai_debug_variables.h"
 #include "xrPhysics/console_vars.h"
