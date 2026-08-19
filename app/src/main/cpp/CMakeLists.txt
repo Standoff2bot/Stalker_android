@@ -34,9 +34,11 @@ add_compile_definitions(
 
 # Force include our SDL stub before any SDL.h includes
 # Add -ferror-limit=0 to see ALL errors at once (not just first 20)
+# Add -w to suppress all warnings (save memory and compilation time)
 add_compile_options(
     -include ${CMAKE_CURRENT_SOURCE_DIR}/SDL_stub.h
     -ferror-limit=0
+    -w
 )
 
 # Include directories
