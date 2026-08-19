@@ -8,22 +8,15 @@
 #ifndef STALKER_ANIMATION_OFFSETS_HPP_INCLUDED
 #define STALKER_ANIMATION_OFFSETS_HPP_INCLUDED
 
-#include "associative_vector.h"
+#include <map>
 #include "xrServer_Objects.h"
 
 struct SRotation;
 
 class animation_offsets
 {
-private:
-    class anim_id_predicate
-    {
-    public:
-        IC bool operator()(shared_str const& lhs, shared_str const& rhs) const { return (lhs._get() < rhs._get()); }
-    };
-
 public:
-    typedef associative_vector<shared_str, SRotation, anim_id_predicate> AnimationOffsets;
+    typedef std::map<shared_str, SRotation> AnimationOffsets;
 
 private:
     AnimationOffsets m_animation_offsets;
