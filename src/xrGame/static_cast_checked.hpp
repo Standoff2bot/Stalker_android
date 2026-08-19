@@ -9,7 +9,7 @@
 #ifndef STATIC_CAST_CHECKED_HPP_INCLUDED
 #define STATIC_CAST_CHECKED_HPP_INCLUDED
 
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(ANDROID)
 
 namespace debug
 {
@@ -72,8 +72,8 @@ inline destination_type static_cast_checked(source_type& source)
     return (static_cast<destination_type>(source));
 }
 
-#else // #ifdef DEBUG
+#else // #if defined(DEBUG) && !defined(ANDROID)
 #define static_cast_checked static_cast
-#endif // #ifdef DEBUG
+#endif // #if defined(DEBUG) && !defined(ANDROID)
 
 #endif // STATIC_CAST_CHECKED_HPP_INCLUDED
