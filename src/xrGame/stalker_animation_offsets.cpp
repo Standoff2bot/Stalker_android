@@ -20,8 +20,8 @@ SRotation const animation_offsets::offsets(shared_str const& animation_id) const
 void animation_offsets::load(LPCSTR section)
 {
     CInifile::Sect& anim_section = pSettings->r_section(section);
-    CInifile::SectIt_ i = anim_section.Data.begin();
-    CInifile::SectIt_ e = anim_section.Data.end();
+    CInifile::Items::const_iterator i = anim_section.Data.begin();
+    CInifile::Items::const_iterator e = anim_section.Data.end();
     for (; i != e; ++i)
     {
         string256 tmp;
