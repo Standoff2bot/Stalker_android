@@ -4,7 +4,9 @@
 #include "xrServer.h"
 #include "game_cl_base.h"
 #include "xrMessages.h"
+#ifndef ANDROID
 #include "xrGameSpyServer.h"
+#endif
 #include "xrEngine/device.h"
 #include "xrEngine/IGame_Persistent.h"
 #include "xrEngine/XR_IOConsole.h"
@@ -114,10 +116,12 @@ bool CLevel::net_start1()
         {
             Server = xr_new<xrServer>();
         }
+#ifndef ANDROID
         else
         {
             Server = xr_new<xrGameSpyServer>();
         }
+#endif
 
         if (xr_strcmp(p.m_alife, "alife"))
         {
