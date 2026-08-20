@@ -15,15 +15,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
 
-    - name: Force update all submodules to clean state
+    - name: Initialize submodules from scratch
       run: |
-        git submodule foreach --recursive git clean -ffdx
-        git submodule foreach --recursive git reset --hard HEAD
-        git submodule update --init --recursive --force
+        git submodule sync --recursive
+        git submodule update --init --force --recursive
         cd xray-16
-        git submodule update --init --recursive --force
+        echo "=== xray-16 submodule state ==="
+        git log --oneline -1
+        echo "=== xrCore.h first 5 lines ==="
+        head -5 src/xrCore/xrCore.h
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
