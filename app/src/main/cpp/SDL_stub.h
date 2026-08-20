@@ -1161,3 +1161,93 @@ inline int SDL_SetHint(const char* name, const char* value) {
     return 0; // No-op on Android stub
 }
 
+// ========== CPU detection functions (for _math.cpp) ==========
+// On Android ARM64, we only have NEON available (no x86 SIMD)
+
+inline int SDL_HasRDTSC() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasMMX() {
+    return 0; // x86 only
+}
+
+inline int SDL_Has3DNow() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasSSE() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasSSE2() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasSSE3() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasSSE41() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasSSE42() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasAVX() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasAVX2() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasAVX512F() {
+    return 0; // x86 only
+}
+
+inline int SDL_HasAltiVec() {
+    return 0; // PowerPC only
+}
+
+inline int SDL_HasARMSIMD() {
+    return 0; // ARMv6 only
+}
+
+inline int SDL_HasNEON() {
+    return 1; // ARM64 always has NEON
+}
+
+inline int SDL_HasLSX() {
+    return 0; // LoongArch only
+}
+
+inline int SDL_HasLASX() {
+    return 0; // LoongArch only
+}
+
+// ========== Timing functions (for _math.cpp) ==========
+#include <time.h>
+#include <sys/time.h>
+
+inline Uint64 SDL_GetPerformanceFrequency() {
+    return 1000000000ULL; // 1 GHz (nanosecond resolution)
+}
+
+inline Uint64 SDL_GetPerformanceCounter() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (Uint64)ts.tv_sec * 1000000000ULL + (Uint64)ts.tv_nsec;
+}
+
+inline Uint32 SDL_GetTicks() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (Uint32)((ts.tv_sec * 1000ULL) + (ts.tv_nsec / 1000000ULL));
+}
+
+// ========== SDL version check macro ==========
+#define SDL_VERSION_ATLEAST(X, Y, Z) 0
+
