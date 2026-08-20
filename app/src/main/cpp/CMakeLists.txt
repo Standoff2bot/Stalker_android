@@ -191,6 +191,11 @@ list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*/rats/.*")
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*alife_.*")
 # Exclude evaluation functions (ef_* files - depend on ALife system)
 list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*ef_.*")
+# Exclude character_info and specific_character (depend on xml_str_id_loader.h which has variadic function issues)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*character_info.*")
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*specific_character.*")
+# Exclude xrgame_dll_detach (includes character_info.h which includes xml_str_id_loader.h)
+list(FILTER XRGAME_SOURCES EXCLUDE REGEX ".*xrgame_dll_detach.*")
 add_library(xrGame STATIC ${XRGAME_SOURCES})
 target_link_libraries(xrGame PRIVATE
     xrCore
