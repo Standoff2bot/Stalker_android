@@ -56,25 +56,18 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
     LOGI("  GLSL: %s", glsl ? (const char*)glsl : "NULL");
     
     try {
-        // Initialize xrCore
-        Core._initialize("xrEngine", nullptr);
-        
-        // Set command line parameters
-        // -nointro: skip intro videos
-        // -noprefetch: disable prefetch (may help on mobile)
-        char* argv[] = {
-            (char*)"xr_3da",
-            (char*)"-nointro",
-            (char*)"-noprefetch"
-        };
-        Core.Initialize(3, argv);
-        
+        // Initialize xrCore with command line
+        // Core.Initialize signature: (ApplicationName, commandLine, init_fs, fs_fname, plugin)
+        // Build command line: -nointro -noprefetch
+        std::string cmdLine = "-nointro -noprefetch";
+        Core.Initialize("xr_3da", cmdLine.c_str(), true, nullptr, false);
+
         LOGI("xrCore initialized successfully");
-        
-        // Initialize engine
+
+        // Initialize engine (but skip External - it has dependencies we don't have yet)
         Engine.Initialize();
-        Engine.External.Initialize();
-        
+        // Engine.External.Initialize(); // Skip for now - needs render subsystem
+
         LOGI("OpenXRay Engine initialized successfully");
         
         g_engineInitialized = true;
