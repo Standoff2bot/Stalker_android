@@ -1,6 +1,3 @@
-// MUST be first: defines platform macros (XRCORE_API, IC, ICF, etc.)
-#include "Common/Platform.hpp"
-
 #include <jni.h>
 #include <android/log.h>
 #include <GLES3/gl3.h>
@@ -9,8 +6,11 @@
 #include <cstring>
 
 // OpenXRay engine headers
-#include "xrEngine/Engine.h"
+// NOTE: xrCore.h MUST be included first - it includes Platform.hpp which defines
+// platform macros (XRCORE_API, IC, ICF, XR_EXPORT, XR_IMPORT, etc.)
+// Other headers (Engine.h, Level.h) depend on these macros being defined
 #include "xrCore/xrCore.h"
+#include "xrEngine/Engine.h"
 #include "xrGame/Level.h"
 
 #define LOG_TAG "OpenXRay"
