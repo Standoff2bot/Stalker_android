@@ -17,10 +17,13 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Initialize nested submodules
+    - name: Force update all submodules to clean state
       run: |
+        git submodule foreach --recursive git clean -ffdx
+        git submodule foreach --recursive git reset --hard HEAD
+        git submodule update --init --recursive --force
         cd xray-16
-        git submodule update --init --recursive
+        git submodule update --init --recursive --force
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
