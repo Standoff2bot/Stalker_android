@@ -1,3 +1,6 @@
+// MUST be first: defines platform macros (XRCORE_API, IC, ICF, etc.)
+#include "Common/Platform.hpp"
+
 #include <jni.h>
 #include <android/log.h>
 #include <GLES3/gl3.h>
