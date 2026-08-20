@@ -143,6 +143,8 @@ list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*script_rtoken_list.*")
 list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*object_factory.*")
 list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*object_item_script.*")
 list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*script_ini_file.*")
+# Exclude xml_str_id_loader (has variadic function issues with xr_string on Android)
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*xml_str_id_loader.*")
 add_library(xrServerEntities STATIC ${XRSERVER_SOURCES})
 target_link_libraries(xrServerEntities PRIVATE xrCore)
 

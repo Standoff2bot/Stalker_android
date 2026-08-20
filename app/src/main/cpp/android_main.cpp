@@ -10,8 +10,9 @@
 // platform macros (XRCORE_API, IC, ICF, XR_EXPORT, XR_IMPORT, etc.)
 // Other headers (Engine.h, Level.h) depend on these macros being defined
 #include "xrCore/xrCore.h"
-#include "xrEngine/Engine.h"
-#include "xrGame/Level.h"
+// Engine and Level temporarily disabled - they require GEnv, Device, and render subsystem
+// #include "xrEngine/Engine.h"
+// #include "xrGame/Level.h"
 
 #define LOG_TAG "OpenXRay"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -64,33 +65,33 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
 
         LOGI("xrCore initialized successfully");
 
-        // Initialize engine (but skip External - it has dependencies we don't have yet)
-        Engine.Initialize();
-        // Engine.External.Initialize(); // Skip for now - needs render subsystem
+        // NOTE: Engine and game systems temporarily disabled
+        // They require GEnv, Device, render subsystem, and other dependencies
+        // that aren't available yet in this minimal Android port
+        // Engine.Initialize(game, renderers); // Needs GameModule and RendererModule
+        // Level initialization also skipped for now
 
-        LOGI("OpenXRay Engine initialized successfully");
-        
         g_engineInitialized = true;
         return 0;
-        
+
     } catch (const std::exception& e) {
-        LOGE("Exception during engine initialization: %s", e.what());
+        LOGE("Exception during xrCore initialization: %s", e.what());
         return -1;
     } catch (...) {
-        LOGE("Unknown exception during engine initialization");
+        LOGE("Unknown exception during xrCore initialization");
         return -2;
     }
 }
 
 void android_xray_destroy() {
     LOGI("=== OpenXRay Shutdown ===");
-    
+
     if (!g_engineInitialized) {
         return;
     }
-    
+
     try {
-        Engine.Destroy();
+        // Engine.Destroy(); // Disabled - Engine not initialized
         Core._destroy();
         
         LOGI("OpenXRay Engine destroyed successfully");
@@ -122,11 +123,15 @@ void android_xray_on_frame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         return;
     }
-    
+
     try {
-        // Main engine frame update
-        Engine.OnFrame();
+        // Main engine frame update - disabled (Engine not initialized)
+        // Engine.OnFrame();
         
+        // For now, just clear the screen
+        glClearColor(0.1f, 0.3f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     } catch (const std::exception& e) {
         LOGE("Exception during frame rendering: %s", e.what());
     } catch (...) {
