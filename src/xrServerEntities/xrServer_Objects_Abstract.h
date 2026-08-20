@@ -42,8 +42,10 @@ inline IServerEntityShape::~IServerEntityShape() = default;
 class CSE_Visual
 {
 public:
+#ifndef ANDROID
     void OnChangeVisual(PropValue* sender);
     void OnChangeAnim(PropValue* sender);
+#endif
 
 public:
     shared_str visual_name;
@@ -77,7 +79,9 @@ private:
 class CSE_Motion
 {
 public:
+#ifndef ANDROID
     void OnChangeMotion(PropValue* sender);
+#endif
 
 public:
     shared_str motion_name;

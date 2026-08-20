@@ -10,9 +10,12 @@
 #endif
 #endif
 
+#ifndef ANDROID
 #include "PropertiesListTypes.h"
 #include "ItemListTypes.h"
+#endif
 
+#ifndef ANDROID
 enum EItemType
 {
     TYPE_INVALID = -1,
@@ -27,6 +30,7 @@ typedef fastdelegate::FastDelegate3<LPCSTR, EItemType, bool&> TOnItemRemove;
 typedef fastdelegate::FastDelegate0<> TOnItemAfterRemove;
 typedef fastdelegate::FastDelegate0<> TOnCloseEvent;
 typedef fastdelegate::FastDelegate0<> TOnModifiedEvent;
+#endif
 
 #ifdef __BORLANDC__
 #include "mxPlacemnt.hpp"
@@ -64,6 +68,7 @@ IC shared_str PrepareKey(LPCSTR pref0, LPCSTR pref1, LPCSTR pref2, LPCSTR key)
 //------------------------------------------------------------------------------
 // Properties
 //------------------------------------------------------------------------------
+#ifndef ANDROID
 class XR_EPROPS_API IPropHelper
 {
 public:
@@ -159,11 +164,13 @@ public:
 };
 //---------------------------------------------------------------------------
 extern IPropHelper& PHelper();
+#endif // ANDROID
 //---------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // List
 //------------------------------------------------------------------------------
+#ifndef ANDROID
 class XR_EPROPS_API IListHelper
 {
 public:
@@ -178,5 +185,6 @@ public:
 #ifdef __BORLANDC__
 extern "C" XR_EPROPS_API IListHelper& LHelper();
 #endif
+#endif // ANDROID
 
 #endif

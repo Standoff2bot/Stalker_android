@@ -51,7 +51,11 @@ using ChooseItemVec = xr_vector<SChooseItem>;
 
 // typedef
 typedef fastdelegate::FastDelegate2<ChooseItemVec&, void*> TOnChooseFillItems;
+#ifndef ANDROID
 typedef fastdelegate::FastDelegate2<SChooseItem*, PropItemVec&> TOnChooseSelectItem;
+#else
+typedef fastdelegate::FastDelegate2<SChooseItem*, void*> TOnChooseSelectItem;
+#endif
 typedef fastdelegate::FastDelegate3<LPCSTR, HDC, const Irect&> TOnDrawThumbnail;
 typedef fastdelegate::FastDelegate0<> TOnChooseClose;
 
