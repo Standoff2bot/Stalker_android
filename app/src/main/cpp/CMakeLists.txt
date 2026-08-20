@@ -133,6 +133,16 @@ target_link_libraries(xrEngine PRIVATE
 
 # xrServerEntities
 file(GLOB_RECURSE XRSERVER_SOURCES ${XRAY_SRC}/xrServerEntities/*.cpp)
+# Exclude editor-only files (use Windows types like LPCSTR, BOOL without proper includes)
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*PropertiesListTypes.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*ItemListTypes.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*xrEProps.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*PropertiesListHelper.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*script_properties_list_helper.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*script_rtoken_list.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*object_factory.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*object_item_script.*")
+list(FILTER XRSERVER_SOURCES EXCLUDE REGEX ".*script_ini_file.*")
 add_library(xrServerEntities STATIC ${XRSERVER_SOURCES})
 target_link_libraries(xrServerEntities PRIVATE xrCore)
 
