@@ -65,6 +65,7 @@ include_directories(
     ${XRAY_EXTERNALS}/sse2neon
     ${XRAY_EXTERNALS}/imgui
     ${XRAY_EXTERNALS}/ode/include
+    ${XRAY_EXTERNALS}/lzo/include
     ${XRAY_EXTERNALS}
     ${XRAY_SDK}/include
 )
@@ -87,14 +88,21 @@ list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*Windows.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*dx.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*Editor.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*BoneEditor.*")
-list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*StackTrace.*")
+# StackTrace - keep it (needed by linker)
+# list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*StackTrace.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*ModuleLookup.*")
-list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*ThreadUtil.*")
+# ThreadUtil - keep it (needed for TaskManager)
+# list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*ThreadUtil.*")
 list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*mailSlot.*")
-list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*/Threading/TaskManager.*")
-list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*/_math\\.cpp")
+# TaskManager - keep it (needed by linker)
+# list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*/Threading/TaskManager.*")
+# _math.cpp - keep it (contains _vector3::magnitude)
+# list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*/_math\\.cpp")
 
-add_library(xrCore STATIC ${XRCORE_SOURCES})
+# Add LZO compression library sources
+file(GLOB LZO_SOURCES ${XRAY_EXTERNALS}/lzo/src/*.c)
+
+add_library(xrCore STATIC ${XRCORE_SOURCES} ${LZO_SOURCES})
 target_compile_options(xrCore PRIVATE
     -DXRCORE_EXPORTS
     -Wno-deprecated-declarations
