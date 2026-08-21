@@ -3,10 +3,17 @@
 // Minimal SDL stub for Android - provides types and constants used by xrEngine
 // Real SDL2 input handling not used on Android (handled via JNI)
 
+#ifdef __cplusplus
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
 #include <cstdint>
+#else
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
+#endif
 
 // SDL string functions - map to standard C
 #define SDL_strlen strlen
