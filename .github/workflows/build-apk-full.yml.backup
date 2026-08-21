@@ -56,22 +56,32 @@ jobs:
     
     - name: Build Debug APK
       run: ./gradlew assembleDebug --stacktrace --info
+    
+    - name: Build Release APK
+      run: ./gradlew assembleRelease --stacktrace --info
 
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: openxray-debug
         path: app/build/outputs/apk/debug/*.apk
-
+    
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: openxray-release
+        path: app/build/outputs/apk/release/*.apk
+    
     - name: Create Release
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v1.0.${{ github.run_number }}
-        name: OpenXRay Android Debug Build ${{ github.run_number }}
+        name: OpenXRay Android Build ${{ github.run_number }}
         draft: false
-        prerelease: true
+        prerelease: false
         files: |
           app/build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/release/*.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
