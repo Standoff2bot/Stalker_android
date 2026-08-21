@@ -65,7 +65,7 @@ include_directories(
     ${XRAY_EXTERNALS}/sse2neon
     ${XRAY_EXTERNALS}/imgui
     ${XRAY_EXTERNALS}/ode/include
-    ${XRAY_EXTERNALS}/lzo/include
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/include
     ${XRAY_EXTERNALS}
     ${XRAY_SDK}/include
 )
@@ -100,9 +100,23 @@ list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*mailSlot.*")
 # list(FILTER XRCORE_SOURCES EXCLUDE REGEX ".*/_math\\.cpp")
 
 # Add LZO compression library sources
-file(GLOB LZO_SOURCES ${XRAY_EXTERNALS}/lzo/src/*.c)
+file(GLOB LZO_SOURCES
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo_init.c
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo_util.c
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo1x_1.c
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo1x_9x.c
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo1x_d1.c
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo1x_d2.c
+    ${XRAY_EXTERNALS}/lzo/lzo-2.10/src/lzo1x_d3.c
+)
 
-add_library(xrCore STATIC ${XRCORE_SOURCES} ${LZO_SOURCES})
+# Add xrMiscMath utility sources (template instantiations for _vector3 and Fmatrix)
+set(XRMISCMATH_SOURCES
+    ${XRAY_SRC}/utils/xrMiscMath/vector.cpp
+    ${XRAY_SRC}/utils/xrMiscMath/matrix.cpp
+)
+
+add_library(xrCore STATIC ${XRCORE_SOURCES} ${LZO_SOURCES} ${XRMISCMATH_SOURCES})
 target_compile_options(xrCore PRIVATE
     -DXRCORE_EXPORTS
     -Wno-deprecated-declarations
