@@ -68,10 +68,12 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
         LOGI("  App name: xr_3da");
         LOGI("  Command line: %s", cmdLine.c_str());
         LOGI("  Init FS: true");
-        LOGI("  FS filename: nullptr");
+        LOGI("  FS filename: %s", fsGameLtx.c_str());
         LOGI("  Plugin: false");
         
-        Core.Initialize("xr_3da", cmdLine.c_str(), true, nullptr, false);
+        // Pass fsgame.ltx path to Core.Initialize
+        // xrCore needs this to set up virtual file system paths
+        Core.Initialize("xr_3da", cmdLine.c_str(), true, fsGameLtx.c_str(), false);
 
         LOGI("Step 3: xrCore initialized successfully!");
 
