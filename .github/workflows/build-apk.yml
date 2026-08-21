@@ -62,16 +62,3 @@ jobs:
       with:
         name: openxray-debug
         path: app/build/outputs/apk/debug/*.apk
-
-    - name: Create Release
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v1.0.${{ github.run_number }}
-        name: OpenXRay Android Debug Build ${{ github.run_number }}
-        draft: false
-        prerelease: true
-        files: |
-          app/build/outputs/apk/debug/*.apk
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
