@@ -57,13 +57,23 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
     LOGI("  GLSL: %s", glsl ? (const char*)glsl : "NULL");
     
     try {
+        LOGI("Step 1: Preparing to initialize xrCore...");
+        
         // Initialize xrCore with command line
         // Core.Initialize signature: (ApplicationName, commandLine, init_fs, fs_fname, plugin)
         // Build command line: -nointro -noprefetch
         std::string cmdLine = "-nointro -noprefetch";
+        
+        LOGI("Step 2: Calling Core.Initialize()...");
+        LOGI("  App name: xr_3da");
+        LOGI("  Command line: %s", cmdLine.c_str());
+        LOGI("  Init FS: true");
+        LOGI("  FS filename: nullptr");
+        LOGI("  Plugin: false");
+        
         Core.Initialize("xr_3da", cmdLine.c_str(), true, nullptr, false);
 
-        LOGI("xrCore initialized successfully");
+        LOGI("Step 3: xrCore initialized successfully!");
 
         // NOTE: Engine and game systems temporarily disabled
         // They require GEnv, Device, render subsystem, and other dependencies
@@ -72,13 +82,14 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
         // Level initialization also skipped for now
 
         g_engineInitialized = true;
+        LOGI("Step 4: Initialization complete, returning success");
         return 0;
 
     } catch (const std::exception& e) {
-        LOGE("Exception during xrCore initialization: %s", e.what());
+        LOGE("✗ Exception during xrCore initialization: %s", e.what());
         return -1;
     } catch (...) {
-        LOGE("Unknown exception during xrCore initialization");
+        LOGE("✗ Unknown exception during xrCore initialization");
         return -2;
     }
 }
