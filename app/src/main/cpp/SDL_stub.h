@@ -13,6 +13,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
+// C compatibility: define nullptr as NULL for pure C compilation
+#define nullptr NULL
+#define inline __inline
 #endif
 
 // SDL string functions - map to standard C
@@ -291,6 +295,11 @@ typedef uint8_t Uint8;
 struct SDL_GameController;
 struct SDL_Cursor;
 struct SDL_Window;
+
+// Typedefs for C compatibility (allow using SDL_Window instead of struct SDL_Window)
+typedef struct SDL_GameController SDL_GameController;
+typedef struct SDL_Cursor SDL_Cursor;
+typedef struct SDL_Window SDL_Window;
 
 // SDL rectangle structure
 typedef struct SDL_Rect {
