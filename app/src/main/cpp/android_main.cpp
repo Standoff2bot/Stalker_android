@@ -59,6 +59,14 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
     try {
         LOGI("Step 1: Preparing to initialize xrCore...");
         
+        // Set working directory to external storage path
+        // xrCore may call getcwd() internally which returns nullptr on Android without this
+        if (chdir(externalStoragePath) != 0) {
+            LOGE("Failed to chdir to %s: %s", externalStoragePath, strerror(errno));
+        } else {
+            LOGI("Changed working directory to: %s", externalStoragePath);
+        }
+        
         // Initialize xrCore with command line
         // Core.Initialize signature: (ApplicationName, commandLine, init_fs, fs_fname, plugin)
         // Build command line: -nointro -noprefetch
