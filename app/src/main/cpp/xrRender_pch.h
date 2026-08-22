@@ -20,13 +20,14 @@
 
 // OpenGL ES 3.0+ types (GLuint, GLenum, etc.)
 #include <GLES3/gl3.h>
+// OpenGL ES 3.1+ for glProgramUniform* functions (separate shader objects)
+#include <GLES3/gl31.h>
 
 // GLAD compatibility layer for Android OpenGL ES
 // Desktop OpenGL uses GLAD loader, but Android has native OpenGL ES
-// Define GLAD feature flags and function pointers to match desktop code
+// Define GLAD feature flags to match desktop code
 #define GLAD_GL_ARB_separate_shader_objects 1
-// glProgramUniform* functions are available in OpenGL ES 3.1+
-// Android OpenGL ES 3.2 (Mali-G710) supports these natively
+// glProgramUniform* functions are available natively in OpenGL ES 3.1+
 
 // DirectX-to-OpenGL type mappings for xrRenderGL compatibility
 // These types are referenced in xrRender code but defined differently in OpenGL backend
@@ -37,6 +38,8 @@ using D3DBLENDOP = GLenum;      // Blend operations (GL_FUNC_ADD, GL_FUNC_SUBTRA
 using D3DCULL = GLenum;         // Culling modes (GL_FRONT, GL_BACK, GL_NONE)
 using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT24, etc.)
 using D3DPRIMITIVETYPE = GLenum; // Primitive types (GL_TRIANGLES, GL_LINES, etc.)
+using D3DRENDERSTATETYPE = u32;  // Render state type (DirectX state IDs)
+using D3DSAMPLERSTATETYPE = u32; // Sampler state type (DirectX sampler state IDs)
 
 // DirectX viewport structure
 struct D3D_VIEWPORT {
@@ -48,10 +51,21 @@ struct D3D_VIEWPORT {
     float MaxDepth;
 };
 
+// Vertex element descriptor (DirectX D3D11_INPUT_ELEMENT_DESC equivalent)
+// OpenGL ES 3.0+ uses vertex attribute pointers set via glVertexAttribPointer
+struct VertexElement {
+    u32 Stream;           // Vertex buffer binding index
+    u32 Offset;           // Byte offset from start of vertex
+    u32 Type;             // Data type (GL_FLOAT, GL_INT, etc.)
+    u32 Method;           // Unused in OpenGL (DirectX vertex processing method)
+    u32 Usage;            // Semantic usage (position, normal, texcoord, etc.)
+    u32 UsageIndex;       // Semantic index for multiple attributes of same type
+};
+
 // Buffer handle types (OpenGL uses GLuint for all buffer objects)
 using ConstantBufferHandle = GLuint;
 using HostBufferHandle = GLuint;
-using InputElementDesc = VertexElement;  // Already defined below
+using InputElementDesc = VertexElement;  // Alias for compatibility
 
 // DirectX blend mode constants mapped to OpenGL equivalents
 #define D3DBLEND_ZERO           GL_ZERO
@@ -102,6 +116,12 @@ using InputElementDesc = VertexElement;  // Already defined below
 #define D3DCULL_NONE            GL_NONE
 #define D3DCULL_CW              0x0900  // GL_CW (not standard in ES, placeholder)
 #define D3DCULL_CCW             0x0901  // GL_CCW (not standard in ES, placeholder)
+
+// DirectX color write enable flags (mapped to OpenGL color mask)
+#define D3DCOLORWRITEENABLE_RED     0x00000001  // GL_TRUE for red channel
+#define D3DCOLORWRITEENABLE_GREEN   0x00000002  // GL_TRUE for green channel
+#define D3DCOLORWRITEENABLE_BLUE    0x00000004  // GL_TRUE for blue channel
+#define D3DCOLORWRITEENABLE_ALPHA   0x00000008  // GL_TRUE for alpha channel
 
 // DirectX Flexible Vertex Format (FVF) flags (legacy, unused in modern OpenGL ES)
 #define D3DFVF_XYZ              0x002   // Position (x, y, z)
@@ -160,17 +180,6 @@ using ID3DState = void*;        // Placeholder - OpenGL doesn't use state object
 using VertexBufferHandle = GLuint;
 using IndexBufferHandle = GLuint;
 
-// Vertex element descriptor (DirectX D3D11_INPUT_ELEMENT_DESC equivalent)
-// OpenGL ES 3.0+ uses vertex attribute pointers set via glVertexAttribPointer
-struct VertexElement {
-    u32 Stream;           // Vertex buffer binding index
-    u32 Offset;           // Byte offset from start of vertex
-    u32 Type;             // Data type (GL_FLOAT, GL_INT, etc.)
-    u32 Method;           // Unused in OpenGL (DirectX vertex processing method)
-    u32 Usage;            // Semantic usage (position, normal, texcoord, etc.)
-    u32 UsageIndex;       // Semantic index for multiple attributes of same type
-};
-
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
 
@@ -198,6 +207,12 @@ extern Flags32 ps_r1_flags;
 
 // Global renderer implementation object (defined in xrRenderGL, stubbed here)
 extern xray::render::RENDER_NAMESPACE::CBackend* RImplementation;
+
+// Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
+namespace xray::render::RENDER_NAMESPACE {
+    class CHW;
+}
+extern xray::render::RENDER_NAMESPACE::CHW* CHW;
 
 // Global device object (defined in xrEngine, available via GEnv)
 #define Device (*GEnv.Render->GetDevice())
