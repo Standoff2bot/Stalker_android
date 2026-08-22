@@ -83,7 +83,8 @@ using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT
 #define D3DTSS_ALPHAOP          3
 #define D3DTSS_ALPHAARG1        4
 #define D3DTSS_ALPHAARG2        5
-#define D3DTSS_ALPHAARG0        6
+#define D3DTSS_COLORARG0        6
+#define D3DTSS_ALPHAARG0        7
 
 // DirectX texture operation (legacy fixed-function)
 #define D3DTOP_DISABLE          0
