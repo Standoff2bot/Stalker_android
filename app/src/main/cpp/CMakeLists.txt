@@ -178,6 +178,7 @@ list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*dxRain.*")
 list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*dxThunderbolt.*")
 add_library(xrRender STATIC ${XRRENDER_SOURCES})
 target_compile_definitions(xrRender PRIVATE ECORE_API=)
+target_compile_options(xrRender PRIVATE -include ${CMAKE_CURRENT_SOURCE_DIR}/xrRender_pch.h)
 target_link_libraries(xrRender PRIVATE
     xrCore
     xrEngine
