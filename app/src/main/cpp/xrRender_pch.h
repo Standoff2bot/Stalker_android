@@ -143,3 +143,22 @@ struct VertexElement {
 #include "Layers/xrRender/Shader.h"
 #include "Layers/xrRender/Blender.h"           // IBlender base class
 #include "Layers/xrRender/Blender_Recorder.h"  // CBlender_Compile definition
+#include "Layers/xrRender/R_Backend.h"         // CBackend definition
+
+// Global renderer objects (forward declarations for OpenGL ES)
+// These are defined in xrRenderGL backend but referenced in shared xrRender code
+namespace xray::render::gl {
+    class CRenderTarget;
+    class CBackend;
+}
+
+// R1 renderer flags (legacy DirectX 9 renderer settings, unused in OpenGL ES)
+extern Flags32 ps_r1_flags;
+#define R1FLAG_FFP_LIGHTMAPS    (1 << 0)
+#define R1FLAG_DLIGHTS          (1 << 1)
+
+// Global renderer implementation object (defined in xrRenderGL, stubbed here)
+extern xray::render::RENDER_NAMESPACE::CBackend* RImplementation;
+
+// Global device object (defined in xrEngine, available via GEnv)
+#define Device (*GEnv.Render->GetDevice())
