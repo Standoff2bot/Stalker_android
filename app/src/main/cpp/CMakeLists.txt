@@ -64,6 +64,7 @@ include_directories(
     ${XRAY_EXTERNALS}/luabind
     ${XRAY_EXTERNALS}/sse2neon
     ${XRAY_EXTERNALS}/imgui
+    ${XRAY_EXTERNALS}/gli
     ${XRAY_EXTERNALS}/ode/include
     ${XRAY_EXTERNALS}/lzo/lzo-2.10/include
     ${XRAY_EXTERNALS}
@@ -150,6 +151,61 @@ list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*tntQAVI.*")
 add_library(xrEngine STATIC ${XRENGINE_SOURCES})
 target_link_libraries(xrEngine PRIVATE
     xrCore
+    xrCDB
+)
+
+# xrRender - shared rendering base (visuals, materials, shaders, geometry)
+file(GLOB_RECURSE XRRENDER_SOURCES ${XRAY_SRC}/Layers/xrRender/*.cpp)
+# Exclude Windows/DirectX specific files
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*_win32.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*_dx.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*Windows.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*dx.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*D3D.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*Editor.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*_test.*")
+# Exclude R1/R2/R4 DirectX renderers
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*/R2_.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*/R4_.*")
+# Exclude backend implementations (we'll add GL backend separately)
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*Backend_Runtime.*")
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*ShaderCache.*")
+add_library(xrRender STATIC ${XRRENDER_SOURCES})
+target_link_libraries(xrRender PRIVATE
+    xrCore
+    xrEngine
+    xrCDB
+)
+
+# xrRenderGL - OpenGL ES backend
+file(GLOB_RECURSE XRRENDERGL_SOURCES ${XRAY_SRC}/Layers/xrRenderGL/*.cpp)
+add_library(xrRenderGL STATIC ${XRRENDERGL_SOURCES})
+target_link_libraries(xrRenderGL PRIVATE
+    xrCore
+    xrEngine
+    xrRender
+    ${GLESv3-lib}
+    ${EGL-lib}
+)
+
+# xrParticles - particle system
+file(GLOB_RECURSE XRPARTICLES_SOURCES ${XRAY_SRC}/xrParticles/*.cpp)
+list(FILTER XRPARTICLES_SOURCES EXCLUDE REGEX ".*Editor.*")
+list(FILTER XRPARTICLES_SOURCES EXCLUDE REGEX ".*_test.*")
+add_library(xrParticles STATIC ${XRPARTICLES_SOURCES})
+target_link_libraries(xrParticles PRIVATE
+    xrCore
+    xrEngine
+)
+
+# xrPhysics - ODE physics engine wrapper
+file(GLOB_RECURSE XRPHYSICS_SOURCES ${XRAY_SRC}/xrPhysics/*.cpp)
+list(FILTER XRPHYSICS_SOURCES EXCLUDE REGEX ".*Editor.*")
+list(FILTER XRPHYSICS_SOURCES EXCLUDE REGEX ".*_test.*")
+add_library(xrPhysics STATIC ${XRPHYSICS_SOURCES})
+target_link_libraries(xrPhysics PRIVATE
+    xrCore
+    xrEngine
     xrCDB
 )
 
@@ -240,6 +296,10 @@ target_link_libraries(xray-engine
     xrCore
     xrCDB
     xrEngine
+    xrRender
+    xrRenderGL
+    xrParticles
+    xrPhysics
     # xrSound temporarily disabled
     xrScriptEngine
     xrServerEntities

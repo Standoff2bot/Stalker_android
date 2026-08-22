@@ -148,40 +148,50 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        glSurfaceView.onPause();
-        nativePause();
+        if (glSurfaceView != null) {
+            glSurfaceView.onPause();
+        }
+        if (engineInitialized) {
+            nativePause();
+        }
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
-        glSurfaceView.onResume();
-        nativeResume();
+        if (glSurfaceView != null) {
+            glSurfaceView.onResume();
+        }
+        if (engineInitialized) {
+            nativeResume();
+        }
     }
-    
+
     @Override
     protected void onDestroy() {
-        nativeDestroy();
+        if (engineInitialized) {
+            nativeDestroy();
+        }
         super.onDestroy();
     }
-    
+
     private static class XRayRenderer implements GLSurfaceView.Renderer {
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             nativeSurfaceCreated();
         }
-        
+
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             nativeSurfaceChanged(width, height);
         }
-        
+
         @Override
         public void onDrawFrame(GL10 gl) {
             nativeDrawFrame();
         }
     }
-    
+
     // Native methods
     private static native void nativeInit(String internalPath, String externalPath);
     private static native void nativeSurfaceCreated();
