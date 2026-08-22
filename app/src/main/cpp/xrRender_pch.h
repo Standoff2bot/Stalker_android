@@ -12,6 +12,9 @@
 #include "xrCore/_color.h"
 #include "xrCore/_flags.h"
 
+// Global environment (GEnv) - must be before xrEngine/Render.h
+#include "Include/xrAPI/xrAPI.h"
+
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
 
