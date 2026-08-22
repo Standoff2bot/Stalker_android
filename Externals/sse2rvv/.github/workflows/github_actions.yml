@@ -1,0 +1,48 @@
+name: Github Actions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cross_compile_tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: setup riscv toolchain
+        run: |
+          mkdir /opt/riscv
+          export PATH=$PATH:/opt/riscv/bin
+          wget https://github.com/howjmay/prebuilt-riscv-spike/releases/download/latest/riscv.tar.gz
+          sudo tar -xzf riscv.tar.gz -C /opt/
+          
+      - name: run tests
+        run: |
+          export PATH=$PATH:/opt/riscv/bin
+          export SIMULATOR_TYPE=qemu
+          export ENABLE_TEST_ALL=true
+          sh scripts/cross-test.sh
+
+  check_test_cases:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: build artifact
+        run: |
+          export ENABLE_TEST_ALL=true
+          make ENABLE_TEST_ALL=${ENABLE_TEST_ALL} test
+
+  coding_style:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: style check
+        run: |
+          sudo apt-get install -q -y clang-format-12
+          sh scripts/check-format.sh
+        shell: bash

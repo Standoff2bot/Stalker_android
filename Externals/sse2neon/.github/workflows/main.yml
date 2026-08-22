@@ -1,0 +1,784 @@
+name: GitHub Actions
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Least-privilege permissions
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host-x86:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cxx_compiler: [g++, clang++-18]
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: install clang
+        if: contains(matrix.cxx_compiler, 'clang')
+        run: |
+          sudo apt-get -o Acquire::Retries=5 update -q -y
+          sudo apt-get -o Acquire::Retries=5 install -q -y --no-install-recommends "${CXX_COMPILER/clang++/clang}"
+        env:
+          CXX_COMPILER: ${{ matrix.cxx_compiler }}
+      - name: build artifact
+        env:
+          CXX: ${{ matrix.cxx_compiler }}
+        run: |
+          sh .ci/cross-tool.sh
+          make check
+          sh .ci/cross-check.sh
+
+  host-win:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        arch: [x86_64, armv7, aarch64]
+    env:
+      LLVM_MINGW_URL: https://github.com/mstorsjo/llvm-mingw/releases/download/20251118/llvm-mingw-20251118-msvcrt-x86_64.zip
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: unpack llvm-mingw
+        run: |
+          curl -L -O $LLVM_MINGW_URL
+          unzip -q llvm-mingw-*.zip
+          rm llvm-mingw-*.zip
+          mv llvm-mingw-* "$HOME/llvm-mingw"
+          echo "$HOME/llvm-mingw/bin" >> $GITHUB_PATH
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: build artifact
+        env:
+          CXX: ${{ matrix.arch }}-w64-mingw32-clang++
+        run: mingw32-make processor=${{ matrix.arch }}
+      - name: run tests
+        if: matrix.arch == 'x86_64'
+        run: mingw32-make check
+
+  # Native AArch64 on GitHub ARM runners - fast, no QEMU overhead
+  host-arm-native:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        include:
+          - cxx_compiler: g++
+            feature: crypto+crc
+            strict_aliasing: false
+          - cxx_compiler: clang++-18
+            feature: crypto+crc
+            strict_aliasing: false
+          - cxx_compiler: g++
+            feature: none
+            strict_aliasing: false
+          - cxx_compiler: g++
+            feature: crypto+crc
+            strict_aliasing: true
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: install clang
+        if: contains(matrix.cxx_compiler, 'clang')
+        run: |
+          # clang-18 is in 'universe' repository on Ubuntu 24.04
+          sudo add-apt-repository -y -n universe
+          sudo apt-get -o Acquire::Retries=5 update -q -y
+          sudo apt-get -o Acquire::Retries=5 install -q -y --no-install-recommends "${CXX_COMPILER/clang++/clang}"
+        env:
+          CXX_COMPILER: ${{ matrix.cxx_compiler }}
+      - name: build and test
+        env:
+          CXX: ${{ matrix.cxx_compiler }}
+        run: |
+          if [ "${{ matrix.strict_aliasing }}" = "true" ]; then
+            make FEATURE=${{ matrix.feature }} STRICT_ALIASING=1 check
+          else
+            make FEATURE=${{ matrix.feature }} check
+          fi
+
+  # ARMv7 requires QEMU emulation - minimize job count
+  host-arm-emulated:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - arch: armv7
+            cxx_compiler: g++
+            arch_cflags: none
+            strict_aliasing: false
+          - arch: armv7
+            cxx_compiler: g++
+            arch_cflags: '-mcpu=cortex-a32 -mfpu=neon-fp-armv8'
+            strict_aliasing: false
+          - arch: armv7
+            cxx_compiler: g++
+            arch_cflags: none
+            strict_aliasing: true
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: build artifact
+        uses: uraimo/run-on-arch-action@v3
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ubuntu24.04
+          githubToken: ${{ github.token }}
+          env: |
+            CXX: ${{ matrix.cxx_compiler }}
+            ARCH_CFLAGS: ${{ matrix.arch_cflags }}
+          install: |
+            rm -rf /var/lib/apt/lists/*
+            apt-get -o Acquire::Retries=5 update
+            apt-get -o Acquire::Retries=5 -o Dpkg::Use-Pty=0 install -y --no-install-recommends gcc g++ make
+            apt-get clean && rm -rf /var/lib/apt/lists/*
+          run: |
+            if [ "${{ matrix.strict_aliasing }}" = "true" ]; then
+              make STRICT_ALIASING=1 check
+            else
+              make check
+            fi
+
+  host-win-msvc:
+    runs-on: windows-2022
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+
+      - name: add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: build artifact
+        run: msbuild sse2neon.vcxproj -t:rebuild -property:Configuration=Release -property:Platform=ARM64
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: msvc-arm64-artifact
+          path: ARM64
+
+  test-win-msvc:
+    runs-on: ubuntu-24.04
+    container: linaro/wine-arm64
+    needs: host-win-msvc
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: msvc-arm64-artifact
+
+      - name: Run tests
+        run: wine-arm64 cmd.exe /c 'Release\sse2neon.exe'
+
+  # Windows ARM64EC build (hybrid x64/ARM64 mode)
+  host-win-msvc-arm64ec:
+    runs-on: windows-2022
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+
+      - name: add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      # ARM64EC requires ARM64 build tools (bundled since VS 17.4)
+      # windows-2022 runner may not have them pre-installed
+      # See: https://github.com/actions/runner-images/issues/4051
+      # See: https://learn.microsoft.com/en-us/windows/arm/arm64ec-build
+      - name: install ARM64 build tools for ARM64EC support
+        shell: pwsh
+        run: |
+          Write-Host "=== Installing ARM64 build tools ==="
+          $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          Write-Host "VS Installation Path: $vsPath"
+          $installerPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer"
+          & "$installerPath\vs_installer.exe" modify `
+            --installPath "$vsPath" `
+            --add Microsoft.VisualStudio.Component.VC.Tools.ARM64 `
+            --quiet --norestart --nocache | Out-Default
+          if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3010) {
+            Write-Error "Failed to install ARM64 toolset (exit code: $LASTEXITCODE)"
+            exit 1
+          }
+          Write-Host "ARM64 toolset installation completed (exit code: $LASTEXITCODE)"
+
+      - name: setup MSVC ARM64 cross-compiler
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_arm64
+
+      - name: verify ARM64 cross-compiler active
+        shell: pwsh
+        run: |
+          Write-Host "=== Toolchain Version (cl /Bv) ==="
+          cl /Bv 2>&1 | Select-Object -First 15
+          # Verify we are in ARM64 cross-compile environment
+          # ARM64EC mode is selected via msbuild Platform=ARM64EC
+          $clOutput = cl 2>&1 | Out-String
+          if ($clOutput -match "arm64") {
+            Write-Host "OK: ARM64 cross-compiler detected"
+          } else {
+            Write-Error "FAIL: Expected ARM64 cross-compiler, got different toolchain"
+            exit 1
+          }
+
+      - name: record toolchain version
+        shell: pwsh
+        run: |
+          Write-Host "=== MSVC Toolchain Info ==="
+          Write-Host "VCToolsInstallDir: $env:VCToolsInstallDir"
+          Write-Host "VCToolsVersion: $env:VCToolsVersion"
+          Write-Host "VSCMD_VER: $env:VSCMD_VER"
+
+      - name: verify ARM64EC platform in vcxproj
+        shell: pwsh
+        run: |
+          $content = Get-Content sse2neon.vcxproj -Raw
+          if ($content -match 'ARM64EC') {
+            Write-Host "OK: ARM64EC platform configuration found in vcxproj"
+          } else {
+            Write-Error "FAIL: ARM64EC platform not found in vcxproj"
+            exit 1
+          }
+
+      - name: create compile-time probe for ARM64EC NEON types
+        shell: pwsh
+        run: |
+          # Create a compile-time probe to verify ARM64EC uses NEON-based types
+          # sse2neon.h uses _DISABLE_SOFTINTRIN_ to prevent SSE type conflicts
+          # Note: Must be .cpp because sse2neon.h requires C++ for MSVC
+          @"
+          #include "sse2neon.h"
+          #include <arm64_neon.h>
+          #if !defined(_M_ARM64EC)
+          #error "Not compiling for ARM64EC"
+          #endif
+          /* Verify __m128 is NEON-based (float32x4_t), not MSVC's union type */
+          void test_neon_type(float32x4_t v) { (void)v; }
+          int main(void) {
+              __m128 x = _mm_setzero_ps();
+              test_neon_type(x);  /* Fails if __m128 is not float32x4_t */
+              return 0;
+          }
+          "@ | Out-File -FilePath ci_arm64ec_probe.cpp -Encoding utf8
+
+      - name: build ARM64EC artifact
+        run: msbuild sse2neon.vcxproj -t:rebuild -p:Configuration=Release -p:Platform=ARM64EC -p:OutDir=ARM64EC\Release\
+
+      - name: verify ARM64EC NEON types via compile-time probe
+        shell: pwsh
+        run: |
+          # Compile probe with ARM64EC target - verifies __m128 is NEON-based
+          Write-Host "=== Compiling ARM64EC NEON type probe ==="
+          cl /nologo /c /arm64EC /Zc:preprocessor /I. ci_arm64ec_probe.cpp
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "FAIL: ARM64EC NEON type probe failed - __m128 may be MSVC union type"
+            exit 1
+          }
+          Write-Host "OK: ARM64EC uses NEON-based __m128 (float32x4_t)"
+
+      - name: verify ARM64EC blocks SSE2NEON_INCLUDE_WINDOWS_H=1
+        shell: pwsh
+        run: |
+          # ARM64EC + SSE2NEON_INCLUDE_WINDOWS_H=1 is intentionally unsupported.
+          # The windows.h include chain is too deep and unpredictable to safely
+          # block all SSE type definitions on this hybrid ABI platform.
+          # This test verifies sse2neon.h correctly emits a compile error.
+          Write-Host "=== Verifying ARM64EC blocks SSE2NEON_INCLUDE_WINDOWS_H=1 ==="
+          @"
+          #define SSE2NEON_INCLUDE_WINDOWS_H 1
+          #include "sse2neon.h"
+          int main(void) { return 0; }
+          "@ | Out-File -FilePath ci_arm64ec_windows_h.cpp -Encoding utf8
+          $output = cl /nologo /c /arm64EC /Zc:preprocessor /I. ci_arm64ec_windows_h.cpp 2>&1 | Out-String
+          if ($LASTEXITCODE -eq 0) {
+            Write-Error "FAIL: Expected compile error for ARM64EC + SSE2NEON_INCLUDE_WINDOWS_H=1"
+            Write-Host "ARM64EC should block SSE2NEON_INCLUDE_WINDOWS_H=1 with #error"
+            exit 1
+          }
+          if ($output -match "SSE2NEON_INCLUDE_WINDOWS_H.*not supported.*ARM64EC") {
+            Write-Host "OK: ARM64EC correctly blocks SSE2NEON_INCLUDE_WINDOWS_H=1"
+          } else {
+            Write-Host "Compiler output: $output"
+            Write-Host "OK: Compilation failed as expected (error message may vary)"
+          }
+          exit 0
+
+      - name: verify ARM64EC PE header
+        shell: pwsh
+        run: |
+          # Confirm the built executable is ARM64EC, not plain x64 or ARM64
+          # ARM64EC binaries use machine type 8664 (AMD64) with ARM64X hybrid marker
+          # and contain .a64xrm section for ARM64EC code
+          $exe = "ARM64EC\Release\sse2neon.exe"
+          if (-not (Test-Path $exe)) {
+            Write-Error "Executable not found: $exe"
+            exit 1
+          }
+          Write-Host "=== PE Header Verification ==="
+          $output = dumpbin /headers $exe | Out-String
+          Write-Host ($output | Select-String -Pattern "machine" -Context 0,1)
+          # ARM64EC uses 8664 (AMD64) machine type with ARM64X marker
+          # Check for ARM64X indicator which confirms ARM64EC hybrid binary
+          if ($output -match 'ARM64X') {
+            Write-Host "OK: PE header confirms ARM64EC (AMD64 with ARM64X hybrid)"
+          } elseif ($output -match '\.a64xrm') {
+            # Fallback: check for ARM64EC-specific section
+            Write-Host "OK: PE header contains .a64xrm section (ARM64EC)"
+          } elseif ($output -match 'machine\s+\(AA64\)') {
+            Write-Error "FAIL: PE header shows pure ARM64 (AA64) - expected ARM64EC"
+            exit 1
+          } elseif ($output -match 'machine\s+\(8664\)' -and -not ($output -match 'ARM64')) {
+            Write-Error "FAIL: PE header shows pure AMD64 (8664) - expected ARM64EC hybrid"
+            exit 1
+          } else {
+            Write-Error "FAIL: Cannot confirm ARM64EC binary"
+            Write-Host "Full header output for diagnosis:"
+            Write-Host $output
+            exit 1
+          }
+
+      - name: compute artifact hash for integrity check
+        shell: pwsh
+        run: |
+          $exe = "ARM64EC\Release\sse2neon.exe"
+          $hash = (Get-FileHash -Path $exe -Algorithm SHA256).Hash
+          $size = (Get-Item $exe).Length
+          Write-Host "=== Artifact Integrity (build side) ==="
+          Write-Host "File: $exe"
+          Write-Host "Size: $size bytes"
+          Write-Host "SHA256: $hash"
+          # Write hash to file for automated cross-job verification
+          $hash | Out-File -FilePath "ARM64EC\Release\sse2neon.sha256" -Encoding utf8 -NoNewline
+
+      - name: upload ARM64EC artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: msvc-arm64ec-artifact
+          path: ARM64EC
+
+  # Windows ARM64 native runner for ARM64EC runtime testing
+  # Runs on Windows on Arm (WoA) without QEMU/emulation
+  # Uses GitHub's Windows ARM64 hosted runner (public preview, April 2025)
+  # See: https://github.blog/changelog/2025-04-14-windows-arm64-hosted-runners-now-available-in-public-preview/
+  test-win-arm64ec:
+    runs-on: windows-11-arm
+    needs: host-win-msvc-arm64ec
+    steps:
+      - name: download ARM64EC artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: msvc-arm64ec-artifact
+          path: ARM64EC
+
+      - name: print WoA environment info
+        shell: pwsh
+        run: |
+          Write-Host "=== Windows on Arm Environment ==="
+          Write-Host "PROCESSOR_ARCHITECTURE: $env:PROCESSOR_ARCHITECTURE"
+          Write-Host "OS: $([System.Environment]::OSVersion)"
+          Write-Host "Runtime Arch: $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)"
+          Write-Host "Process Arch: $([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture)"
+
+      - name: verify artifact structure and integrity
+        shell: pwsh
+        run: |
+          Write-Host "=== Artifact Contents ==="
+          Get-ChildItem -Recurse | Format-Table Mode, Length, Name
+          # download-artifact with path: ARM64EC restores original directory structure
+          $exe = "ARM64EC\Release\sse2neon.exe"
+          $hashFile = "ARM64EC\Release\sse2neon.sha256"
+          if (-not (Test-Path $exe)) {
+            Write-Error "Expected executable not found: $exe"
+            Write-Host "Available files:"
+            Get-ChildItem -Recurse -Filter "*.exe" | Format-Table FullName
+            exit 1
+          }
+          # Verify file is not empty or stale
+          $size = (Get-Item $exe).Length
+          if ($size -eq 0) {
+            Write-Error "FAIL: Executable is empty (0 bytes)"
+            exit 1
+          }
+          # Compute hash and auto-compare with build job hash file
+          $hash = (Get-FileHash -Path $exe -Algorithm SHA256).Hash
+          Write-Host "=== Artifact Integrity (test side) ==="
+          Write-Host "File: $exe"
+          Write-Host "Size: $size bytes"
+          Write-Host "SHA256: $hash"
+          if (Test-Path $hashFile) {
+            $expectedHash = (Get-Content $hashFile -Raw).Trim()
+            Write-Host "Expected: $expectedHash"
+            if ($hash -eq $expectedHash) {
+              Write-Host "OK: SHA256 matches build job"
+            } else {
+              Write-Error "FAIL: SHA256 mismatch - artifact corrupted or wrong file"
+              exit 1
+            }
+          } else {
+            Write-Host "WARN: Hash file not found, skipping auto-comparison"
+          }
+          Write-Host "OK: Executable found and verified"
+
+      - name: verify PE header on WoA
+        shell: pwsh
+        run: |
+          # Re-verify PE on ARM runner to catch wrong artifact download
+          # ARM64EC binaries use machine type 0x8664 (AMD64) with ARM64X hybrid data
+          # Check for .a64xrm section which contains ARM64EC code
+          $exe = ".\ARM64EC\Release\sse2neon.exe"
+          $bytes = [System.IO.File]::ReadAllBytes($exe)
+          # PE signature at offset in DOS header (0x3C), then +4 for machine type
+          $peOffset = [BitConverter]::ToInt32($bytes, 0x3C)
+          $machine = [BitConverter]::ToUInt16($bytes, $peOffset + 4)
+          $machineHex = "0x{0:X4}" -f $machine
+          Write-Host "=== PE Machine Type (WoA verification) ==="
+          Write-Host "Machine code: $machineHex"
+          # ARM64EC uses 0x8664 (AMD64) for x64 emulation compatibility
+          # Verify by checking for .a64xrm section name in binary
+          $content = [System.Text.Encoding]::ASCII.GetString($bytes)
+          $hasA64xrm = $content.Contains(".a64xrm")
+          if ($machine -eq 0x8664 -and $hasA64xrm) {
+            Write-Host "OK: PE confirms ARM64EC (AMD64 hybrid with .a64xrm section)"
+          } elseif ($machine -eq 0xAA64) {
+            Write-Error "FAIL: PE shows pure ARM64 (0xAA64) - expected ARM64EC"
+            exit 1
+          } elseif ($machine -eq 0x8664 -and -not $hasA64xrm) {
+            Write-Error "FAIL: PE shows pure AMD64 (0x8664) without ARM64EC sections"
+            exit 1
+          } else {
+            Write-Error "FAIL: Unknown machine type $machineHex"
+            exit 1
+          }
+
+      - name: smoke test - verify binary loads
+        id: smoke_test
+        shell: pwsh
+        run: |
+          Write-Host "=== Smoke Test: Verify ARM64EC binary can load ==="
+          $exe = ".\ARM64EC\Release\sse2neon.exe"
+          # Run briefly to verify binary loads (catches DLL/runtime issues)
+          # Kill after 500ms - we just need to confirm it started
+          $proc = Start-Process -FilePath $exe -PassThru -NoNewWindow
+          Start-Sleep -Milliseconds 500
+          if ($proc.HasExited) {
+            if ($proc.ExitCode -ne 0) {
+              Write-Error "FAIL: Binary crashed immediately (exit code: $($proc.ExitCode))"
+              exit 1
+            }
+            # Exited with 0 in <500ms = tests ran very fast, still OK
+            Write-Host "OK: Binary loaded and completed (exit code: 0)"
+          } else {
+            # Still running after 500ms = loaded successfully, kill it
+            Write-Host "OK: Binary loaded and executing - stopping smoke test"
+            $proc | Stop-Process -Force
+          }
+
+      - name: run ARM64EC tests on WoA
+        id: run_tests
+        shell: pwsh
+        run: |
+          Write-Host "=== Running ARM64EC binary on Windows on Arm (no QEMU) ==="
+          $exe = ".\ARM64EC\Release\sse2neon.exe"
+          & $exe
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Test execution failed with exit code: $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
+          Write-Host "OK: ARM64EC tests passed on WoA"
+
+      - name: diagnostic on failure
+        if: failure() && (steps.smoke_test.outcome == 'failure' || steps.run_tests.outcome == 'failure')
+        shell: pwsh
+        run: |
+          Write-Host "=== Diagnostic: VC Runtime DLLs in System32 ==="
+          Get-ChildItem "$env:SystemRoot\System32\vcruntime*.dll" -ErrorAction SilentlyContinue | Format-Table Name, Length
+          Get-ChildItem "$env:SystemRoot\System32\msvcp*.dll" -ErrorAction SilentlyContinue | Format-Table Name, Length
+          Write-Host "=== Diagnostic: where vcruntime140.dll ==="
+          where.exe vcruntime140.dll 2>&1
+          Write-Host "=== Diagnostic: System Info ==="
+          Write-Host "OS: $([System.Environment]::OSVersion)"
+          Write-Host "Processor: $env:PROCESSOR_ARCHITECTURE"
+
+  # Sanitizers on ARM: UBSan + ASan
+  sanitizers-arm:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        sanitizer: [undefined, address]
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: build and test with sanitizer
+        env:
+          CXX: g++
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+        run: make FEATURE=crypto+crc SANITIZE=${{ matrix.sanitizer }} check
+
+  # Sanitizers on x86: catch host-specific UB
+  sanitizers-x86:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        sanitizer: [undefined, address]
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: build and test with sanitizer
+        env:
+          CXX: g++
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+        run: make SANITIZE=${{ matrix.sanitizer }} check
+
+  # Fuzz testing on ARM: libFuzzer with ASan/UBSan
+  # Only runs on native ARM64 (no QEMU) with clang (libFuzzer requirement)
+  fuzz-arm:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: install clang
+        run: |
+          # clang-18 is in 'universe' repository on Ubuntu 24.04
+          sudo add-apt-repository -y -n universe
+          sudo apt-get -o Acquire::Retries=5 update -q -y
+          sudo apt-get -o Acquire::Retries=5 install -q -y --no-install-recommends clang-18
+      - name: build and run fuzzer
+        env:
+          CXX: clang++-18
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+          ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
+        run: |
+          # Build fuzzer with crypto+crc extensions for full coverage
+          make FEATURE=crypto+crc FUZZ_CXX=clang++-18 tests/fuzz
+          # Run for 30 seconds in CI (verbose mode for logs)
+          make FUZZ_TIME=30 fuzz-verbose
+
+  static-analysis:
+    runs-on: ubuntu-24.04
+    env:
+      LLVM_VERSION: 20
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: install clang tools
+        run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-$LLVM_VERSION main"
+          sudo apt-get update -q -y
+          sudo apt-get install -q -y clang-format-$LLVM_VERSION clang-tidy-$LLVM_VERSION \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+      - name: style check
+        run: sh .ci/check-format.sh
+        shell: bash
+      - name: cast macro validation
+        run: python3 .ci/check-casts.py --strict sse2neon.h
+      - name: preprocessor macro hygiene
+        run: python3 .ci/check-macros.py sse2neon.h
+      - name: clang-tidy
+        run: |
+          clang-tidy-$LLVM_VERSION sse2neon.h \
+            --warnings-as-errors='' \
+            -- -x c++ -std=gnu++14 -I. \
+            --target=aarch64-linux-gnu \
+            --gcc-toolchain=/usr \
+            -isystem /usr/aarch64-linux-gnu/include \
+            -march=armv8-a+simd+crypto+crc
+      - name: uninitialized variable warnings
+        run: |
+          # Check for uninitialized variable warnings
+          COMMON="-fsyntax-only -Werror -Wuninitialized -Wall -std=gnu++14 -I. -march=armv8-a+simd+crypto+crc"
+          # GCC: -Wmaybe-uninitialized is stricter than Clang's -Wuninitialized
+          aarch64-linux-gnu-g++ $COMMON -Wmaybe-uninitialized tests/main.cpp
+          # Clang: cross-compile targeting AArch64
+          clang++-$LLVM_VERSION $COMMON --target=aarch64-linux-gnu \
+            --gcc-toolchain=/usr -isystem /usr/aarch64-linux-gnu/include tests/main.cpp
+
+  # Android NDK build verification (arm64-v8a)
+  # Uses NDK toolchain for full build including linking
+  host-android-ndk:
+    runs-on: ubuntu-24.04
+    env:
+      NDK_VERSION: r29
+      NDK_ROOT: ${{ github.workspace }}/android-ndk
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: cache Android NDK toolchain
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NDK_ROOT }}
+          key: android-ndk-toolchain-${{ env.NDK_VERSION }}
+      - name: extract NDK toolchain
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: |
+          # Download NDK and extract toolchain (sysroot + clang + runtime libs)
+          NDK_URL="https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip"
+          echo "Downloading Android NDK ${NDK_VERSION}..."
+          curl -L -o ndk.zip "$NDK_URL"
+          # Extract toolchain directory (includes clang, sysroot, runtime libs)
+          unzip -q ndk.zip "android-ndk-${NDK_VERSION}/toolchains/llvm/prebuilt/linux-x86_64/*"
+          mkdir -p "$NDK_ROOT"
+          mv "android-ndk-${NDK_VERSION}/toolchains/llvm/prebuilt/linux-x86_64"/* "$NDK_ROOT/"
+          rm -rf "android-ndk-${NDK_VERSION}" ndk.zip
+          echo "NDK toolchain size: $(du -sh "$NDK_ROOT" | cut -f1)"
+      - name: verify toolchain
+        run: |
+          echo "=== NDK Toolchain Info ==="
+          "$NDK_ROOT/bin/clang++" --version | head -2
+          ls -la "$NDK_ROOT/bin/" | grep -E 'aarch64.*clang' | head -3
+      - name: build for Android arm64-v8a (API 21)
+        run: |
+          # API 21 = Android 5.0 Lollipop (minimum arm64 support)
+          CXX="$NDK_ROOT/bin/aarch64-linux-android21-clang++"
+          echo '#include "sse2neon.h"' | $CXX \
+            -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter \
+            -I. -x c++ -fsyntax-only -
+          echo "OK: sse2neon.h compiles for Android arm64-v8a (API 21)"
+      - name: build for Android arm64-v8a (API 28, crypto+crc)
+        run: |
+          # API 28 = Android 9 Pie (common modern baseline)
+          CXX="$NDK_ROOT/bin/aarch64-linux-android28-clang++"
+          echo '#include "sse2neon.h"' | $CXX \
+            -march=armv8-a+crypto+crc \
+            -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter \
+            -I. -x c++ -fsyntax-only -
+          echo "OK: sse2neon.h compiles for Android arm64-v8a (API 28, crypto+crc)"
+      - name: build static test harness for Android
+        run: |
+          echo "Building static test harness..."
+          CXX="$NDK_ROOT/bin/aarch64-linux-android28-clang++"
+          # Static linking avoids bionic dynamic linker dependency for QEMU execution
+          $CXX \
+            -march=armv8-a+crypto+crc \
+            -std=c++14 -O2 -Wall -Wextra -Werror -Wno-unused-parameter \
+            -I. -static \
+            -o sse2neon-android-test \
+            tests/main.cpp tests/impl.cpp tests/common.cpp tests/binding.cpp
+          file sse2neon-android-test
+          echo "OK: Static test harness built for Android arm64-v8a"
+      - name: install QEMU for ARM64
+        run: |
+          sudo apt-get -o Acquire::Retries=5 update -q -y
+          sudo apt-get -o Acquire::Retries=5 install -q -y --no-install-recommends qemu-user-static
+      - name: run tests via QEMU
+        run: |
+          echo "Running Android ARM64 tests via QEMU..."
+          qemu-aarch64-static ./sse2neon-android-test
+          echo "OK: All tests passed on Android arm64-v8a (QEMU)"
+
+  # iOS build verification
+  host-ios:
+    runs-on: macos-14
+    strategy:
+      matrix:
+        include:
+          - sdk: iphoneos
+            target: arm64-apple-ios14.0
+          - sdk: iphonesimulator
+            target: arm64-apple-ios15.0-simulator
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: build for iOS
+        run: |
+          echo '#include "sse2neon.h"' | xcrun --sdk ${{ matrix.sdk }} clang++ \
+            --target=${{ matrix.target }} \
+            -isysroot $(xcrun --sdk ${{ matrix.sdk }} --show-sdk-path) \
+            -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter \
+            -I. -x c++ -fsyntax-only -
+      - name: build for iOS (CRC32 enabled)
+        run: |
+          echo '#include "sse2neon.h"' | xcrun --sdk ${{ matrix.sdk }} clang++ \
+            --target=${{ matrix.target }} \
+            -isysroot $(xcrun --sdk ${{ matrix.sdk }} --show-sdk-path) \
+            -march=armv8-a+crc \
+            -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter \
+            -I. -x c++ -fsyntax-only -
+
+  # Differential Testing: Generate golden reference data on x86
+  # This captures native SSE outputs for comparison against sse2neon on ARM
+  differential-x86:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: build differential test harness (native SSE)
+        run: make tests/differential
+      - name: generate golden reference data
+        run: |
+          mkdir -p golden
+          ./tests/differential --generate golden
+          echo "Generated $(ls golden/*.golden | wc -l) golden files"
+      - name: upload golden data artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: differential-golden-data
+          path: golden/
+          retention-days: 1
+
+  # Differential Testing: Verify sse2neon against x86 golden data on ARM
+  differential-arm:
+    runs-on: ubuntu-24.04-arm
+    needs: differential-x86
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: download golden data from x86
+        uses: actions/download-artifact@v6
+        with:
+          name: differential-golden-data
+          path: golden/
+      - name: show golden data info
+        run: |
+          echo "Golden files from x86:"
+          ls -la golden/ | head -20
+          echo "Total: $(ls golden/*.golden | wc -l) files"
+      - name: build differential test harness (sse2neon)
+        run: make FEATURE=crypto+crc tests/differential
+      - name: verify sse2neon against x86 golden data
+        run: |
+          echo "Comparing sse2neon (ARM) against native SSE (x86)..."
+          ./tests/differential --verify golden/
+
+  # Coverage verification: check intrinsic coverage against Intel reference
+  coverage:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: check intrinsic coverage
+        id: coverage
+        run: |
+          echo "=== Intrinsic Coverage Report ==="
+          python3 scripts/coverage-check.py
+          COVERAGE=$(python3 scripts/coverage-check.py --badge)
+          echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+      - name: update coverage badge
+        if: github.ref == 'refs/heads/master'
+        run: |
+          mkdir -p badge
+          printf '{"schemaVersion":1,"label":"SSE Coverage","message":"%s%%","color":"blue"}\n' \
+            "${{ steps.coverage.outputs.coverage }}" > badge/coverage.json
+          cat badge/coverage.json
+      - name: deploy badge to GitHub Pages
+        if: github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./badge
+          destination_dir: badge
+          keep_files: true
