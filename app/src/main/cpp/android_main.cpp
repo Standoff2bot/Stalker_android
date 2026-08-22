@@ -67,6 +67,14 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
             LOGI("Changed working directory to: %s", externalStoragePath);
         }
         
+        // Set environment variables that xrCore might expect
+        // On Android these are often nullptr which causes strncpy() crashes
+        setenv("HOME", dataPath, 1);
+        setenv("USER", "android", 1);
+        setenv("TMPDIR", dataPath, 1);
+        setenv("TEMP", dataPath, 1);
+        LOGI("Set environment variables: HOME=%s, USER=android, TMPDIR=%s", dataPath, dataPath);
+        
         // Initialize xrCore with command line
         // Core.Initialize signature: (ApplicationName, commandLine, init_fs, fs_fname, plugin)
         // Build command line: -nointro -noprefetch
