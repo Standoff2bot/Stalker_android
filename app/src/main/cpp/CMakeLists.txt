@@ -171,6 +171,7 @@ list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*/R4_.*")
 list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*Backend_Runtime.*")
 list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*ShaderCache.*")
 add_library(xrRender STATIC ${XRRENDER_SOURCES})
+target_compile_definitions(xrRender PRIVATE ECORE_API=)
 target_link_libraries(xrRender PRIVATE
     xrCore
     xrEngine
@@ -180,6 +181,7 @@ target_link_libraries(xrRender PRIVATE
 # xrRenderGL - OpenGL ES backend
 file(GLOB_RECURSE XRRENDERGL_SOURCES ${XRAY_SRC}/Layers/xrRenderGL/*.cpp)
 add_library(xrRenderGL STATIC ${XRRENDERGL_SOURCES})
+target_compile_definitions(xrRenderGL PRIVATE ECORE_API=)
 target_link_libraries(xrRenderGL PRIVATE
     xrCore
     xrEngine
@@ -193,6 +195,7 @@ file(GLOB_RECURSE XRPARTICLES_SOURCES ${XRAY_SRC}/xrParticles/*.cpp)
 list(FILTER XRPARTICLES_SOURCES EXCLUDE REGEX ".*Editor.*")
 list(FILTER XRPARTICLES_SOURCES EXCLUDE REGEX ".*_test.*")
 add_library(xrParticles STATIC ${XRPARTICLES_SOURCES})
+target_compile_definitions(xrParticles PRIVATE ECORE_API=)
 target_link_libraries(xrParticles PRIVATE
     xrCore
     xrEngine
@@ -203,6 +206,7 @@ file(GLOB_RECURSE XRPHYSICS_SOURCES ${XRAY_SRC}/xrPhysics/*.cpp)
 list(FILTER XRPHYSICS_SOURCES EXCLUDE REGEX ".*Editor.*")
 list(FILTER XRPHYSICS_SOURCES EXCLUDE REGEX ".*_test.*")
 add_library(xrPhysics STATIC ${XRPHYSICS_SOURCES})
+target_compile_definitions(xrPhysics PRIVATE ECORE_API=)
 target_link_libraries(xrPhysics PRIVATE
     xrCore
     xrEngine
