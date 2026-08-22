@@ -18,6 +18,9 @@
 // ImGui types (ImTextureID)
 #include "imgui/imgui.h"
 
+// OpenGL ES 3.0+ types (GLuint, GLenum, etc.)
+#include <GLES3/gl3.h>
+
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
 
