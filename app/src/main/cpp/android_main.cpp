@@ -30,28 +30,21 @@ static GLuint g_testShaderProgram = 0;
 static GLuint g_testVAO = 0;
 static GLuint g_testVBO = 0;
 
-static const char* g_testVertexShader = R"(
-#version 300 es
+static const char* g_testVertexShader = R"(#version 300 es
 precision highp float;
-
 layout(location = 0) in vec2 aPos;
 layout(location = 1) in vec3 aColor;
-
 out vec3 vColor;
-
 void main() {
     gl_Position = vec4(aPos, 0.0, 1.0);
     vColor = aColor;
 }
 )";
 
-static const char* g_testFragmentShader = R"(
-#version 300 es
+static const char* g_testFragmentShader = R"(#version 300 es
 precision highp float;
-
 in vec3 vColor;
 out vec4 FragColor;
-
 void main() {
     FragColor = vec4(vColor, 1.0);
 }
