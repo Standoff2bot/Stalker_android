@@ -30,6 +30,25 @@ using D3DBLENDOP = GLenum;      // Blend operations (GL_FUNC_ADD, GL_FUNC_SUBTRA
 using D3DCULL = GLenum;         // Culling modes (GL_FRONT, GL_BACK, GL_NONE)
 using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT24, etc.)
 
+// DirectX blend mode constants mapped to OpenGL equivalents
+#define D3DBLEND_ZERO           GL_ZERO
+#define D3DBLEND_ONE            GL_ONE
+#define D3DBLEND_SRCCOLOR       GL_SRC_COLOR
+#define D3DBLEND_INVSRCCOLOR    GL_ONE_MINUS_SRC_COLOR
+#define D3DBLEND_SRCALPHA       GL_SRC_ALPHA
+#define D3DBLEND_INVSRCALPHA    GL_ONE_MINUS_SRC_ALPHA
+#define D3DBLEND_DESTALPHA      GL_DST_ALPHA
+#define D3DBLEND_INVDESTALPHA   GL_ONE_MINUS_DST_ALPHA
+#define D3DBLEND_DESTCOLOR      GL_DST_COLOR
+#define D3DBLEND_INVDESTCOLOR   GL_ONE_MINUS_DST_COLOR
+#define D3DBLEND_SRCALPHASAT    GL_SRC_ALPHA_SATURATE
+
+// DirectX texture addressing modes mapped to OpenGL
+#define D3DTADDRESS_WRAP        GL_REPEAT
+#define D3DTADDRESS_MIRROR      GL_MIRRORED_REPEAT
+#define D3DTADDRESS_CLAMP       GL_CLAMP_TO_EDGE
+#define D3DTADDRESS_BORDER      GL_CLAMP_TO_BORDER
+
 // Render state object (DirectX ID3D11SamplerState equivalent)
 // In OpenGL we don't have state objects, just direct state setting
 using ID3DState = void*;        // Placeholder - OpenGL doesn't use state objects
@@ -55,3 +74,4 @@ struct VertexElement {
 // Shader resource pointers (ref_shader, ref_geom, ref_constant)
 // Include actual definitions from xrRender, not void* placeholders
 #include "Layers/xrRender/Shader.h"
+#include "Layers/xrRender/Blender_Recorder.h"  // CBlender_Compile definition
