@@ -115,7 +115,11 @@ struct VertexElement {
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
 
+// Property system for shader blenders (xrP_TOKEN, xrP_Integer, xrP_BOOL)
+#include "xrEngine/Properties.h"
+
 // Shader resource pointers (ref_shader, ref_geom, ref_constant)
 // Include actual definitions from xrRender, not void* placeholders
 #include "Layers/xrRender/Shader.h"
+#include "Layers/xrRender/Blender.h"           // IBlender base class
 #include "Layers/xrRender/Blender_Recorder.h"  // CBlender_Compile definition
