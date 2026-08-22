@@ -1,0 +1,9 @@
+[submodule "lfs"]
+	path = lfs
+	url = https://github.com/OpenXRay/luafilesystem.git
+[submodule "lua-marshal"]
+	path = lua-marshal
+	url = https://github.com/OpenXRay/lua-marshal.git
+[submodule "lua-pack"]
+	path = lua-pack
+	url = https://github.com/OpenXRay/lua-pack.git

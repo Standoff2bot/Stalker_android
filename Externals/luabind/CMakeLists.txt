@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(xrLuabind)
+include_directories(/data/data/com.termux/files/usr/include/luajit-2.1)
+set(CMAKE_CXX_STANDARD 17)
+
+option(BUILD_SHARED_LIBS "Build luabind as a shared library" ON)
+option(LUABIND_BUILD_TESTING "Build luabind with tests" OFF)
+
+add_subdirectory(luabind)
+add_subdirectory(src)
+
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    if(LUABIND_BUILD_TESTING)
+        add_subdirectory(test)
+    endif()
+    add_subdirectory(doc)
+endif()
