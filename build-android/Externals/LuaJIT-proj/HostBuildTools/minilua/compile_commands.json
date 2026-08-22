@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/minilua",
+  "command": "/data/data/com.termux/files/usr/bin/cc -O3 -DNDEBUG -march=armv8-a -O3 -fomit-frame-pointer -fno-stack-protector -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE -DLUAJIT_TARGET=LUAJIT_ARCH_arm64 -DLJ_ARCH_HASFPU=1 -DLJ_ABI_SOFTFP=0 -o CMakeFiles/minilua.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/minilua.c.o -c /data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/minilua.c",
+  "file": "/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/minilua.c",
+  "output": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/minilua/CMakeFiles/minilua.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/minilua.c.o"
+}
+]

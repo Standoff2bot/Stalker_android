@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/minilua/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

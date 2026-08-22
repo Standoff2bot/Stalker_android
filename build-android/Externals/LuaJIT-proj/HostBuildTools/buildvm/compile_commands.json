@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm",
+  "command": "/data/data/com.termux/files/usr/bin/cc -I/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/../.. -I/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src -O3 -DNDEBUG -march=armv8-a -O3 -fomit-frame-pointer -fno-stack-protector -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE -DLUAJIT_TARGET=LUAJIT_ARCH_arm64 -DLJ_ARCH_HASFPU=1 -DLJ_ABI_SOFTFP=0 -Wno-discarded-qualifiers -o CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_asm.c.o -c /data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_asm.c",
+  "file": "/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_asm.c",
+  "output": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_asm.c.o"
+},
+{
+  "directory": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm",
+  "command": "/data/data/com.termux/files/usr/bin/cc -I/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/../.. -I/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src -O3 -DNDEBUG -march=armv8-a -O3 -fomit-frame-pointer -fno-stack-protector -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE -DLUAJIT_TARGET=LUAJIT_ARCH_arm64 -DLJ_ARCH_HASFPU=1 -DLJ_ABI_SOFTFP=0 -Wno-discarded-qualifiers -o CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_fold.c.o -c /data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_fold.c",
+  "file": "/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_fold.c",
+  "output": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_fold.c.o"
+},
+{
+  "directory": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm",
+  "command": "/data/data/com.termux/files/usr/bin/cc -I/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/../.. -I/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src -O3 -DNDEBUG -march=armv8-a -O3 -fomit-frame-pointer -fno-stack-protector -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE -DLUAJIT_TARGET=LUAJIT_ARCH_arm64 -DLJ_ARCH_HASFPU=1 -DLJ_ABI_SOFTFP=0 -Wno-discarded-qualifiers -o CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_lib.c.o -c /data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_lib.c",
+  "file": "/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_lib.c",
+  "output": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_lib.c.o"
+},
+{
+  "directory": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm",
+  "command": "/data/data/com.termux/files/usr/bin/cc -I/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/../.. -I/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src -O3 -DNDEBUG -march=armv8-a -O3 -fomit-frame-pointer -fno-stack-protector -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE -DLUAJIT_TARGET=LUAJIT_ARCH_arm64 -DLJ_ARCH_HASFPU=1 -DLJ_ABI_SOFTFP=0 -Wno-discarded-qualifiers -o CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_peobj.c.o -c /data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_peobj.c",
+  "file": "/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_peobj.c",
+  "output": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_peobj.c.o"
+},
+{
+  "directory": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm",
+  "command": "/data/data/com.termux/files/usr/bin/cc -I/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/../.. -I/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src -O3 -DNDEBUG -march=armv8-a -O3 -fomit-frame-pointer -fno-stack-protector -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE -DLUAJIT_TARGET=LUAJIT_ARCH_arm64 -DLJ_ARCH_HASFPU=1 -DLJ_ABI_SOFTFP=0 -Wno-discarded-qualifiers -o CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm.c.o -c /data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm.c",
+  "file": "/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm.c",
+  "output": "/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/buildvm/CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm.c.o"
+}
+]

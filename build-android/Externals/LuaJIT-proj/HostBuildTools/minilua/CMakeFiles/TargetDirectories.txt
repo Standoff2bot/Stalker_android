@@ -1,0 +1,3 @@
+/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/minilua/CMakeFiles/minilua.dir
+/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/minilua/CMakeFiles/edit_cache.dir
+/data/data/com.termux/files/home/xray-16/build-android/Externals/LuaJIT-proj/HostBuildTools/minilua/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,7 @@
+# ninja log v7
+27	261	1786803804952495674	CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_peobj.c.o	f0a6270e6f0d2c3c
+1	411	1786803804924495674	CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_asm.c.o	d0d1517a42aec6ff
+15	515	1786803804940495674	CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_fold.c.o	937ffd9bab776a3f
+19	630	1786803804944495674	CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm_lib.c.o	b009931c75ec7aa0
+35	1451	1786803804960495674	CMakeFiles/buildvm.dir/data/data/com.termux/files/home/xray-16/Externals/LuaJIT/src/host/buildvm.c.o	dbc9566d03ac5fec
+1451	1699	1786803806376495674	buildvm	7a24f0e37402a174

@@ -6,7 +6,7 @@
 // Basic xrCore types
 #include "xrCore/xrCore.h"
 #include "xrCore/_sphere.h"
-#include "xrCore/_box.h"
+#include "xrCore/_fbox.h"
 #include "xrCore/_vector3d.h"
 #include "xrCore/_matrix.h"
 #include "xrCore/_color.h"
