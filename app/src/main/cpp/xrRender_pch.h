@@ -93,6 +93,26 @@ using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT
 #define D3DTOP_MODULATE         3
 #define D3DTOP_ADD              4
 
+// DirectX texture arguments (legacy fixed-function)
+#define D3DTA_DIFFUSE           0x00000000  // Select diffuse color
+#define D3DTA_CURRENT           0x00000001  // Select result of previous stage
+#define D3DTA_TEXTURE           0x00000002  // Select texture color
+#define D3DTA_TFACTOR           0x00000003  // Select TFACTOR (texture factor constant)
+#define D3DTA_SPECULAR          0x00000004  // Select specular color
+#define D3DTA_TEMP              0x00000005  // Select temporary register
+#define D3DTA_CONSTANT          0x00000006  // Select per-stage constant
+#define D3DTA_COMPLEMENT        0x00000010  // Take 1.0 - x
+#define D3DTA_ALPHAREPLICATE    0x00000020  // Replicate alpha to color components
+
+// DirectX render states (legacy fixed-function pipeline state)
+#define D3DRS_TEXTUREFACTOR     0           // Texture factor constant (RGBA)
+
+// Blender class IDs (shader material types)
+#define B_DEFAULT               0
+#define B_PARTICLE              1
+#define B_SHADOW_TEX            2
+#define B_LIGHT                 3
+
 // Render state object (DirectX ID3D11SamplerState equivalent)
 // In OpenGL we don't have state objects, just direct state setting
 using ID3DState = void*;        // Placeholder - OpenGL doesn't use state objects
