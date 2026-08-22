@@ -49,6 +49,49 @@ using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT
 #define D3DTADDRESS_CLAMP       GL_CLAMP_TO_EDGE
 #define D3DTADDRESS_BORDER      GL_CLAMP_TO_BORDER
 
+// DirectX texture filter modes mapped to OpenGL
+#define D3DTEXF_NONE            GL_NEAREST
+#define D3DTEXF_POINT           GL_NEAREST
+#define D3DTEXF_LINEAR          GL_LINEAR
+#define D3DTEXF_ANISOTROPIC     GL_LINEAR  // Anisotropic filtering set separately
+
+// DirectX comparison functions mapped to OpenGL
+#define D3DCMP_NEVER            GL_NEVER
+#define D3DCMP_LESS             GL_LESS
+#define D3DCMP_EQUAL            GL_EQUAL
+#define D3DCMP_LESSEQUAL        GL_LEQUAL
+#define D3DCMP_GREATER          GL_GREATER
+#define D3DCMP_NOTEQUAL         GL_NOTEQUAL
+#define D3DCMP_GREATEREQUAL     GL_GEQUAL
+#define D3DCMP_ALWAYS           GL_ALWAYS
+
+// DirectX stencil operations mapped to OpenGL
+#define D3DSTENCILOP_KEEP       GL_KEEP
+#define D3DSTENCILOP_ZERO       GL_ZERO
+#define D3DSTENCILOP_REPLACE    GL_REPLACE
+#define D3DSTENCILOP_INCRSAT    GL_INCR
+#define D3DSTENCILOP_DECRSAT    GL_DECR
+#define D3DSTENCILOP_INVERT     GL_INVERT
+#define D3DSTENCILOP_INCR       GL_INCR_WRAP
+#define D3DSTENCILOP_DECR       GL_DECR_WRAP
+
+// DirectX texture stage state (legacy fixed-function pipeline)
+// OpenGL ES 3.0+ uses shaders, these are for compatibility only
+#define D3DTSS_COLOROP          0
+#define D3DTSS_COLORARG1        1
+#define D3DTSS_COLORARG2        2
+#define D3DTSS_ALPHAOP          3
+#define D3DTSS_ALPHAARG1        4
+#define D3DTSS_ALPHAARG2        5
+#define D3DTSS_ALPHAARG0        6
+
+// DirectX texture operation (legacy fixed-function)
+#define D3DTOP_DISABLE          0
+#define D3DTOP_SELECTARG1       1
+#define D3DTOP_SELECTARG2       2
+#define D3DTOP_MODULATE         3
+#define D3DTOP_ADD              4
+
 // Render state object (DirectX ID3D11SamplerState equivalent)
 // In OpenGL we don't have state objects, just direct state setting
 using ID3DState = void*;        // Placeholder - OpenGL doesn't use state objects
