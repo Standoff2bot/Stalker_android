@@ -210,7 +210,10 @@ extern xray::render::RENDER_NAMESPACE::CBackend* RImplementation;
 
 // Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
 namespace xray::render::RENDER_NAMESPACE {
-    class CHW;
+    class CHW {
+    public:
+        static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
+    };
 }
 extern xray::render::RENDER_NAMESPACE::CHW* CHW;
 
