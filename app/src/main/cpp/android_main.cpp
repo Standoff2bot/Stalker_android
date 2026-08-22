@@ -25,6 +25,140 @@ static bool g_engineInitialized = false;
 static int g_viewportWidth = 0;
 static int g_viewportHeight = 0;
 
+// Simple test rendering - colored triangle
+static GLuint g_testShaderProgram = 0;
+static GLuint g_testVAO = 0;
+static GLuint g_testVBO = 0;
+
+static const char* g_testVertexShader = R"(
+#version 300 es
+precision highp float;
+
+layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec3 aColor;
+
+out vec3 vColor;
+
+void main() {
+    gl_Position = vec4(aPos, 0.0, 1.0);
+    vColor = aColor;
+}
+)";
+
+static const char* g_testFragmentShader = R"(
+#version 300 es
+precision highp float;
+
+in vec3 vColor;
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(vColor, 1.0);
+}
+)";
+
+static bool InitTestRenderer() {
+    LOGI("Initializing test renderer...");
+    
+    // Compile vertex shader
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &g_testVertexShader, nullptr);
+    glCompileShader(vertexShader);
+    
+    GLint success;
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+        LOGE("Vertex shader compilation failed: %s", infoLog);
+        return false;
+    }
+    
+    // Compile fragment shader
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &g_testFragmentShader, nullptr);
+    glCompileShader(fragmentShader);
+    
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+        LOGE("Fragment shader compilation failed: %s", infoLog);
+        return false;
+    }
+    
+    // Link shader program
+    g_testShaderProgram = glCreateProgram();
+    glAttachShader(g_testShaderProgram, vertexShader);
+    glAttachShader(g_testShaderProgram, fragmentShader);
+    glLinkProgram(g_testShaderProgram);
+    
+    glGetProgramiv(g_testShaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetProgramInfoLog(g_testShaderProgram, 512, nullptr, infoLog);
+        LOGE("Shader program linking failed: %s", infoLog);
+        return false;
+    }
+    
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    
+    // Create triangle vertices (position + color)
+    float vertices[] = {
+        // Position      // Color (R, G, B)
+         0.0f,  0.5f,    1.0f, 0.0f, 0.0f,  // Top (Red)
+        -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,  // Bottom-left (Green)
+         0.5f, -0.5f,    0.0f, 0.0f, 1.0f   // Bottom-right (Blue)
+    };
+    
+    glGenVertexArrays(1, &g_testVAO);
+    glGenBuffers(1, &g_testVBO);
+    
+    glBindVertexArray(g_testVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, g_testVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    // Position attribute
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    // Color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
+    LOGI("✓ Test renderer initialized successfully");
+    return true;
+}
+
+static void RenderTestTriangle() {
+    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glUseProgram(g_testShaderProgram);
+    glBindVertexArray(g_testVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+}
+
+static void DestroyTestRenderer() {
+    if (g_testVAO) {
+        glDeleteVertexArrays(1, &g_testVAO);
+        g_testVAO = 0;
+    }
+    if (g_testVBO) {
+        glDeleteBuffers(1, &g_testVBO);
+        g_testVBO = 0;
+    }
+    if (g_testShaderProgram) {
+        glDeleteProgram(g_testShaderProgram);
+        g_testShaderProgram = 0;
+    }
+}
+
 extern "C" {
 
 // Initialize OpenXRay engine with Android paths
@@ -98,6 +232,12 @@ int android_xray_init(const char* dataPath, const char* externalStoragePath) {
         // that aren't available yet in this minimal Android port
         // Engine.Initialize(game, renderers); // Needs GameModule and RendererModule
         // Level initialization also skipped for now
+        
+        // Initialize test renderer (simple colored triangle)
+        if (!InitTestRenderer()) {
+            LOGE("Failed to initialize test renderer");
+            return -3;
+        }
 
         g_engineInitialized = true;
         LOGI("Step 4: Initialization complete, returning success");
@@ -120,17 +260,20 @@ void android_xray_destroy() {
     }
 
     try {
+        // Destroy test renderer
+        DestroyTestRenderer();
+        
         // Engine.Destroy(); // Disabled - Engine not initialized
         Core._destroy();
-        
+
         LOGI("OpenXRay Engine destroyed successfully");
-        
+
     } catch (const std::exception& e) {
         LOGE("Exception during engine shutdown: %s", e.what());
     } catch (...) {
         LOGE("Unknown exception during engine shutdown");
     }
-    
+
     g_engineInitialized = false;
 }
 
@@ -156,10 +299,9 @@ void android_xray_on_frame() {
     try {
         // Main engine frame update - disabled (Engine not initialized)
         // Engine.OnFrame();
-        
-        // For now, just clear the screen
-        glClearColor(0.1f, 0.3f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Render test triangle (colorful gradient triangle)
+        RenderTestTriangle();
 
     } catch (const std::exception& e) {
         LOGE("Exception during frame rendering: %s", e.what());
