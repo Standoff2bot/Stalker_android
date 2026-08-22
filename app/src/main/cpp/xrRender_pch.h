@@ -15,18 +15,12 @@
 // Global environment (GEnv) - must be before xrEngine/Render.h
 #include "Include/xrAPI/xrAPI.h"
 
+// ImGui types (ImTextureID)
+#include "imgui/imgui.h"
+
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
 
-// Define ref_shader, ref_geom, ref_constant if not available
-// These are smart pointer types for render resources
-#ifndef ref_shader
-namespace xray::render::RENDER_NAMESPACE {
-    class CBlender;
-    template<typename T> class intrusive_ptr;
-    // Placeholder definitions - will be replaced by actual render backend
-    using ref_shader = void*;
-    using ref_geom = void*;
-    using ref_constant = void*;
-}
-#endif
+// Shader resource pointers (ref_shader, ref_geom, ref_constant)
+// Include actual definitions from xrRender, not void* placeholders
+#include "Layers/xrRender/Shader.h"
