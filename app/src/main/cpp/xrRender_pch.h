@@ -21,6 +21,13 @@
 // OpenGL ES 3.0+ types (GLuint, GLenum, etc.)
 #include <GLES3/gl3.h>
 
+// GLAD compatibility layer for Android OpenGL ES
+// Desktop OpenGL uses GLAD loader, but Android has native OpenGL ES
+// Define GLAD feature flags and function pointers to match desktop code
+#define GLAD_GL_ARB_separate_shader_objects 1
+// glProgramUniform* functions are available in OpenGL ES 3.1+
+// Android OpenGL ES 3.2 (Mali-G710) supports these natively
+
 // DirectX-to-OpenGL type mappings for xrRenderGL compatibility
 // These types are referenced in xrRender code but defined differently in OpenGL backend
 using D3DCMPFUNC = GLenum;      // Comparison functions (GL_NEVER, GL_LESS, etc.)
@@ -29,6 +36,22 @@ using D3DBLEND = GLenum;        // Blend factors (GL_ZERO, GL_ONE, GL_SRC_ALPHA,
 using D3DBLENDOP = GLenum;      // Blend operations (GL_FUNC_ADD, GL_FUNC_SUBTRACT, etc.)
 using D3DCULL = GLenum;         // Culling modes (GL_FRONT, GL_BACK, GL_NONE)
 using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT24, etc.)
+using D3DPRIMITIVETYPE = GLenum; // Primitive types (GL_TRIANGLES, GL_LINES, etc.)
+
+// DirectX viewport structure
+struct D3D_VIEWPORT {
+    float TopLeftX;
+    float TopLeftY;
+    float Width;
+    float Height;
+    float MinDepth;
+    float MaxDepth;
+};
+
+// Buffer handle types (OpenGL uses GLuint for all buffer objects)
+using ConstantBufferHandle = GLuint;
+using HostBufferHandle = GLuint;
+using InputElementDesc = VertexElement;  // Already defined below
 
 // DirectX blend mode constants mapped to OpenGL equivalents
 #define D3DBLEND_ZERO           GL_ZERO
@@ -74,6 +97,22 @@ using D3DFORMAT = GLenum;       // Texture formats (GL_RGBA8, GL_DEPTH_COMPONENT
 #define D3DSTENCILOP_INVERT     GL_INVERT
 #define D3DSTENCILOP_INCR       GL_INCR_WRAP
 #define D3DSTENCILOP_DECR       GL_DECR_WRAP
+
+// DirectX culling modes mapped to OpenGL
+#define D3DCULL_NONE            GL_NONE
+#define D3DCULL_CW              0x0900  // GL_CW (not standard in ES, placeholder)
+#define D3DCULL_CCW             0x0901  // GL_CCW (not standard in ES, placeholder)
+
+// DirectX Flexible Vertex Format (FVF) flags (legacy, unused in modern OpenGL ES)
+#define D3DFVF_XYZ              0x002   // Position (x, y, z)
+#define D3DFVF_XYZRHW           0x004   // Transformed position (x, y, z, rhw)
+#define D3DFVF_NORMAL           0x010   // Normal vector
+#define D3DFVF_DIFFUSE          0x040   // Diffuse color
+#define D3DFVF_SPECULAR         0x080   // Specular color
+#define D3DFVF_TEX1             0x100   // 1 texture coordinate set
+#define D3DFVF_TEX2             0x200   // 2 texture coordinate sets
+#define D3DFVF_TEX3             0x300   // 3 texture coordinate sets
+#define D3DFVF_TEX4             0x400   // 4 texture coordinate sets
 
 // DirectX texture stage state (legacy fixed-function pipeline)
 // OpenGL ES 3.0+ uses shaders, these are for compatibility only
