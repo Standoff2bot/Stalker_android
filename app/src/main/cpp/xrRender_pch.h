@@ -377,7 +377,7 @@ namespace xray::render::RENDER_NAMESPACE {
         
         // Rendering subsystems (used by various xrRender modules)
         CDetailManager* Details = nullptr;      // Detail geometry manager
-        CHOM* HOM = nullptr;                    // Hardware occlusion manager
+        CHOM HOM;                                // Hardware occlusion manager (object, not pointer!)
         
         // Render state flags (legacy DirectX 9 renderer)
         struct {
