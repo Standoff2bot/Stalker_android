@@ -3,6 +3,9 @@
 // Precompiled header for xrRender module
 // Force-included for all xrRender source files to provide missing types
 
+// SDL stub (must be BEFORE any xrEngine includes that use SDL types)
+#include "SDL_stub.h"
+
 // Basic xrCore types
 #include "xrCore/xrCore.h"
 #include "xrCore/_sphere.h"
