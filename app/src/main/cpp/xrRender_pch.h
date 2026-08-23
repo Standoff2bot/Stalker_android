@@ -317,7 +317,12 @@ namespace xray::render::RENDER_NAMESPACE {
 // Forward declare CResourceManager (shader/texture resource manager)
 // Full implementation will be in xrRenderGL backend
 namespace xray::render::RENDER_NAMESPACE {
-    class CResourceManager;
+    class CResourceManager {
+    public:
+        // Stub methods for ColorMapManager.cpp
+        void* _CreateBlender(const char*) { return nullptr; }
+        void _DeleteBlender(void*) {}
+    };
 }
 
 #include "Layers/xrRender/R_Backend.h"         // CBackend definition (uses CHW::IMM_CTX_ID)
@@ -325,7 +330,11 @@ namespace xray::render::RENDER_NAMESPACE {
 // Forward declarations for RImplementation subsystems
 namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
-    class CHOM;            // Hardware Occlusion Manager
+    class CHOM {           // Hardware Occlusion Manager
+    public:
+        // Stub methods for DetailManager.cpp
+        bool IsSOccluded(void*, float) { return false; }
+    };
     
     // Simple profiler timer stub for BasicStats (Begin/End methods)
     struct CStatTimer {
@@ -333,6 +342,10 @@ namespace xray::render::RENDER_NAMESPACE {
         void End() {}
     };
 }
+
+// Global game level pointer (used in DetailManager_Decompress.cpp)
+class CLevel;
+extern CLevel* g_pGameLevel;
 
 // RImplementation wrapper class - extends CBackend with additional fields
 // xrRender code expects RImplementation to have Resources field and blender methods
