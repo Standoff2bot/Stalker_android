@@ -294,6 +294,9 @@ using IndexBufferHandle = GLuint;
 // Task system (parallel task execution)
 #include "xrCore/Threading/Task.hpp"
 
+// Visibility data structure (vis_data with sphere, box, clear() method)
+#include "xrEngine/vis_common.h"
+
 // Hardware capabilities class (needed by CHW)
 #include "Layers/xrRender/HWCaps.h"
 
@@ -323,19 +326,6 @@ namespace xray::render::RENDER_NAMESPACE {
 namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
     
-    // Visibility structure used by DetailManager (S.vis)
-    struct vis_data {
-        struct { Fvector P; float R; } sphere;  // Bounding sphere
-        Fbox box;                                // Bounding box
-        
-        // Clear method (used in DetailManager code)
-        void clear() {
-            sphere.P.set(0, 0, 0);
-            sphere.R = 0;
-            box.invalidate();
-        }
-    };
-    
     class CHOM {           // Hardware Occlusion Manager
     public:
         // Stub methods and fields for DetailManager.cpp
@@ -343,7 +333,7 @@ namespace xray::render::RENDER_NAMESPACE {
         // Visibility flags struct with call operator
         struct {
             bool box;
-            // Callable for HOM.visible(S.vis) - takes vis_data structure
+            // Callable for HOM.visible(S.vis) - takes vis_data structure from vis_common.h
             bool operator()(const vis_data&) { return true; }  // Always visible for stub
         } visible;
     };
