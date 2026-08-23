@@ -237,6 +237,12 @@ using IndexBufferHandle = GLuint;
 // Property system for shader blenders (xrP_TOKEN, xrP_Integer, xrP_BOOL)
 #include "xrEngine/Properties.h"
 
+// Collision detection (xrXRC - ray casting)
+#include "xrCDB/xrXRC.h"
+
+// Task system (parallel task execution)
+#include "xrCore/Threading/Task.hpp"
+
 // Hardware capabilities class (needed by CHW)
 #include "Layers/xrRender/HWCaps.h"
 
@@ -265,12 +271,33 @@ namespace xray::render::RENDER_NAMESPACE {
 
 #include "Layers/xrRender/R_Backend.h"         // CBackend definition (uses CHW::IMM_CTX_ID)
 
+// Forward declarations for RImplementation subsystems
+namespace xray::render::RENDER_NAMESPACE {
+    class CDetailManager;  // Detail geometry (grass, small objects)
+    class CHOM;            // Hardware Occlusion Manager
+}
+
 // RImplementation wrapper class - extends CBackend with additional fields
 // xrRender code expects RImplementation to have Resources field and blender methods
 namespace xray::render::RENDER_NAMESPACE {
     class CRenderImplementation : public CBackend {
     public:
         CResourceManager* Resources = nullptr;  // Shader/texture resource manager
+        
+        // Rendering subsystems (used by various xrRender modules)
+        CDetailManager* Details = nullptr;      // Detail geometry manager
+        CHOM* HOM = nullptr;                    // Hardware occlusion manager
+        
+        // Render state flags (legacy DirectX 9 renderer)
+        struct {
+            u32 dummy = 0;  // Placeholder for render state flags
+        } o;
+        
+        // Basic rendering statistics
+        struct {
+            u32 Primitives = 0;   // Number of primitives rendered
+            u32 Vertices = 0;     // Number of vertices rendered
+        } BasicStats;
         
         // Blender management methods (shader material compilation)
         IBlender* blender_create(CLASS_ID cls);
@@ -300,5 +327,14 @@ extern xray::render::RENDER_NAMESPACE::CRenderImplementation* _RImplementation_p
 // Global hardware object (defined in xrRenderGL glHW.cpp)
 extern xray::render::RENDER_NAMESPACE::CHW HW;
 
-// Device object is available via GEnv global environment
-// Code should use GEnv.Render or GEnv.Render->... directly, no Device macro needed
+// Device object - forward declare IRenderDevice (main engine device)
+// Device is used extensively in xrRender for timing, camera, viewport access
+class IRenderDevice;
+extern IRenderDevice* _Device_ptr;
+#define Device (*_Device_ptr)
+
+// Global render configuration variables (detail rendering, render states)
+extern float ps_r__Detail_density;      // Detail density multiplier (grass, small objects)
+extern float ps_r__Detail_height;       // Detail height threshold
+extern int ps_current_detail_height;    // Current detail LOD height
+extern u32 rsDrawDetails;               // Render state: draw detail geometry flag
