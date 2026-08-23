@@ -233,6 +233,7 @@ using IndexBufferHandle = GLuint;
 
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
+#include "xrEngine/device.h"        // CRenderDevice (Device object)
 
 // Property system for shader blenders (xrP_TOKEN, xrP_Integer, xrP_BOOL)
 #include "xrEngine/Properties.h"
@@ -290,7 +291,11 @@ namespace xray::render::RENDER_NAMESPACE {
         
         // Render state flags (legacy DirectX 9 renderer)
         struct {
-            u32 dummy = 0;  // Placeholder for render state flags
+            u32 ffp = 0;                    // Fixed-function pipeline flags
+            u32 no_detail_textures = 0;     // Disable detail textures flag
+            u32 DetailCache = 0;            // Detail cache flags
+            u32 DetailVisibility = 0;       // Detail visibility flags
+            u32 DetailRender = 0;           // Detail render flags
         } o;
         
         // Basic rendering statistics
@@ -327,10 +332,9 @@ extern xray::render::RENDER_NAMESPACE::CRenderImplementation* _RImplementation_p
 // Global hardware object (defined in xrRenderGL glHW.cpp)
 extern xray::render::RENDER_NAMESPACE::CHW HW;
 
-// Device object - forward declare IRenderDevice (main engine device)
+// Device object - CRenderDevice (main engine device)
 // Device is used extensively in xrRender for timing, camera, viewport access
-class IRenderDevice;
-extern IRenderDevice* _Device_ptr;
+extern CRenderDevice* _Device_ptr;
 #define Device (*_Device_ptr)
 
 // Global render configuration variables (detail rendering, render states)
@@ -338,3 +342,4 @@ extern float ps_r__Detail_density;      // Detail density multiplier (grass, sma
 extern float ps_r__Detail_height;       // Detail height threshold
 extern int ps_current_detail_height;    // Current detail LOD height
 extern u32 rsDrawDetails;               // Render state: draw detail geometry flag
+extern Flags32 psDeviceFlags;           // Device configuration flags
