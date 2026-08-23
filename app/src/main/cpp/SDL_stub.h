@@ -1266,7 +1266,5 @@ inline Uint32 SDL_GetTicks() {
 
 // ========== SDL version check macro ==========
 #define SDL_VERSION_ATLEAST(X, Y, Z) 0
-
-// ========== XR_CONTROLLER_AXIS_MAX for static_assert compatibility ==========
-#define XR_CONTROLLER_AXIS_MAX SDL_CONTROLLER_AXIS_MAX
+// XR_CONTROLLER_AXIS_MAX is defined in xrEngine/xr_input.h as enum member, not macro
 
