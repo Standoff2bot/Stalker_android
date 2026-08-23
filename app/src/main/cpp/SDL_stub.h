@@ -1267,64 +1267,6 @@ inline Uint32 SDL_GetTicks() {
 // ========== SDL version check macro ==========
 #define SDL_VERSION_ATLEAST(X, Y, Z) 0
 
-// ========== Additional SDL types for device.h ==========
-
-// SDL rectangle
-typedef struct SDL_Rect {
-    int x, y;
-    int w, h;
-} SDL_Rect;
-
-// SDL event structure (minimal stub)
-typedef struct SDL_Event {
-    Uint32 type;
-    Uint32 timestamp;
-    // Actual event data varies by type, but we don't process SDL events on Android
-} SDL_Event;
-
-// SDL cursor types
-typedef void SDL_Cursor;
-typedef enum {
-    SDL_SYSTEM_CURSOR_ARROW,
-    SDL_SYSTEM_CURSOR_IBEAM,
-    SDL_SYSTEM_CURSOR_WAIT,
-    SDL_SYSTEM_CURSOR_CROSSHAIR,
-    SDL_SYSTEM_CURSOR_WAITARROW,
-    SDL_SYSTEM_CURSOR_SIZENWSE,
-    SDL_SYSTEM_CURSOR_SIZENESW,
-    SDL_SYSTEM_CURSOR_SIZEWE,
-    SDL_SYSTEM_CURSOR_SIZENS,
-    SDL_SYSTEM_CURSOR_SIZEALL,
-    SDL_SYSTEM_CURSOR_NO,
-    SDL_SYSTEM_CURSOR_HAND,
-    SDL_NUM_SYSTEM_CURSORS
-} SDL_SystemCursor;
-
-// SDL game controller types
-typedef void SDL_GameController;
-typedef enum {
-    SDL_CONTROLLER_AXIS_INVALID = -1,
-    SDL_CONTROLLER_AXIS_LEFTX,
-    SDL_CONTROLLER_AXIS_LEFTY,
-    SDL_CONTROLLER_AXIS_RIGHTX,
-    SDL_CONTROLLER_AXIS_RIGHTY,
-    SDL_CONTROLLER_AXIS_TRIGGERLEFT,
-    SDL_CONTROLLER_AXIS_TRIGGERRIGHT,
-    SDL_CONTROLLER_AXIS_MAX
-} SDL_GameControllerAxis;
-
-// XR_CONTROLLER_AXIS_MAX for static_assert compatibility
+// ========== XR_CONTROLLER_AXIS_MAX for static_assert compatibility ==========
 #define XR_CONTROLLER_AXIS_MAX SDL_CONTROLLER_AXIS_MAX
-
-// ========== SDL function stubs for device.h ==========
-
-// Event processing (no-op on Android - we use JNI events)
-inline void SDL_PumpEvents() {
-    // No-op: Android events handled via JNI, not SDL
-}
-
-// Window management (no-op on Android - managed via JNI/Surface)
-inline void SDL_DestroyWindow(void* window) {
-    // No-op: Android window managed by Java layer
-}
 
