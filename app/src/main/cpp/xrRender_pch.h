@@ -343,12 +343,19 @@ namespace xray::render::RENDER_NAMESPACE {
 
 // Global game level pointer (used in DetailManager_Decompress.cpp)
 // Forward declare CLevel with needed fields
+
+// Forward declare CDB types for CObjectSpace methods
+namespace CDB {
+    class MODEL;
+    struct TRI;
+}
+
 class CObjectSpace {
 public:
     void* GetStaticRoot() { return nullptr; }
-    void* GetStaticModel() { return nullptr; }
-    void* GetStaticTris() { return nullptr; }
-    void* GetStaticVerts() { return nullptr; }
+    CDB::MODEL* GetStaticModel() { return nullptr; }
+    CDB::TRI* GetStaticTris() { return nullptr; }
+    Fvector* GetStaticVerts() { return nullptr; }
 };
 
 class CLevel {
