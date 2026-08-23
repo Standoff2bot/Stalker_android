@@ -166,6 +166,53 @@ using InputElementDesc = VertexElement;  // Alias for compatibility
 #define D3DTA_COMPLEMENT        0x00000010  // Take 1.0 - x
 #define D3DTA_ALPHAREPLICATE    0x00000020  // Replicate alpha to color components
 
+// DirectX vertex declaration types (D3DDECLTYPE_*)
+#define D3DDECLTYPE_FLOAT1      0   // 1D float
+#define D3DDECLTYPE_FLOAT2      1   // 2D float vector
+#define D3DDECLTYPE_FLOAT3      2   // 3D float vector
+#define D3DDECLTYPE_FLOAT4      3   // 4D float vector
+#define D3DDECLTYPE_D3DCOLOR    4   // 4D packed ARGB color
+#define D3DDECLTYPE_UBYTE4      5   // 4D unsigned byte
+#define D3DDECLTYPE_SHORT2      6   // 2D signed short
+#define D3DDECLTYPE_SHORT4      7   // 4D signed short
+#define D3DDECLTYPE_UBYTE4N     8   // Normalized 4D unsigned byte
+#define D3DDECLTYPE_SHORT2N     9   // Normalized 2D signed short
+#define D3DDECLTYPE_SHORT4N     10  // Normalized 4D signed short
+#define D3DDECLTYPE_USHORT2N    11  // Normalized 2D unsigned short
+#define D3DDECLTYPE_USHORT4N    12  // Normalized 4D unsigned short
+#define D3DDECLTYPE_UDEC3       13  // 3D unsigned 10-10-10 format
+#define D3DDECLTYPE_DEC3N       14  // Normalized 3D signed 10-10-10 format
+#define D3DDECLTYPE_FLOAT16_2   15  // 2D 16-bit float vector
+#define D3DDECLTYPE_FLOAT16_4   16  // 4D 16-bit float vector
+
+// DirectX vertex declaration method (D3DDECLMETHOD_*)
+#define D3DDECLMETHOD_DEFAULT   0   // Default method
+#define D3DDECLMETHOD_PARTIALU  1   // Partial U
+#define D3DDECLMETHOD_PARTIALV  2   // Partial V
+#define D3DDECLMETHOD_CROSSUV   3   // Cross UV
+#define D3DDECLMETHOD_UV        4   // UV
+#define D3DDECLMETHOD_LOOKUP    5   // Lookup
+#define D3DDECLMETHOD_LOOKUPPRESAMPLED 6 // Lookup presampled
+
+// DirectX vertex declaration usage (D3DDECLUSAGE_*)
+#define D3DDECLUSAGE_POSITION   0   // Position
+#define D3DDECLUSAGE_BLENDWEIGHT 1  // Blend weight
+#define D3DDECLUSAGE_BLENDINDICES 2 // Blend indices
+#define D3DDECLUSAGE_NORMAL     3   // Normal
+#define D3DDECLUSAGE_PSIZE      4   // Point size
+#define D3DDECLUSAGE_TEXCOORD   5   // Texture coordinate
+#define D3DDECLUSAGE_TANGENT    6   // Tangent
+#define D3DDECLUSAGE_BINORMAL   7   // Binormal
+#define D3DDECLUSAGE_TESSFACTOR 8   // Tessellation factor
+#define D3DDECLUSAGE_POSITIONT  9   // Transformed position
+#define D3DDECLUSAGE_COLOR      10  // Color
+#define D3DDECLUSAGE_FOG        11  // Fog
+#define D3DDECLUSAGE_DEPTH      12  // Depth
+#define D3DDECLUSAGE_SAMPLE     13  // Sample
+
+// DirectX vertex declaration end marker
+#define D3DDECL_END() {0xFF, 0, 0xFF, 0, 0, 0}
+
 // DirectX render states (legacy fixed-function pipeline state)
 #define D3DRS_TEXTUREFACTOR         0   // Texture factor constant (RGBA)
 #define D3DRS_COLORWRITEENABLE      1   // Color write enable mask
