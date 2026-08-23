@@ -322,6 +322,13 @@ namespace xray::render::RENDER_NAMESPACE {
 // Forward declarations for RImplementation subsystems
 namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
+    
+    // Visibility structure used by DetailManager (S.vis)
+    struct vis_data {
+        struct { Fvector P; float R; } sphere;  // Bounding sphere
+        Fbox box;                                // Bounding box
+    };
+    
     class CHOM {           // Hardware Occlusion Manager
     public:
         // Stub methods and fields for DetailManager.cpp
@@ -329,8 +336,8 @@ namespace xray::render::RENDER_NAMESPACE {
         // Visibility flags struct with call operator
         struct {
             bool box;
-            // Callable for HOM->visible(box) - takes box parameter
-            bool operator()(const Fbox&) { return false; }
+            // Callable for HOM.visible(S.vis) - takes vis_data structure
+            bool operator()(const vis_data&) { return true; }  // Always visible for stub
         } visible;
     };
     
