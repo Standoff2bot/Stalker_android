@@ -169,6 +169,17 @@ using InputElementDesc = VertexElement;  // Alias for compatibility
 #define D3DRS_COLORWRITEENABLE1     2   // Color write enable mask for RT1
 #define D3DRS_COLORWRITEENABLE2     3   // Color write enable mask for RT2
 #define D3DRS_COLORWRITEENABLE3     4   // Color write enable mask for RT3
+#define D3DRS_ZFUNC                 5   // Depth comparison function
+#define D3DRS_ZWRITEENABLE          6   // Depth write enable
+#define D3DRS_ALPHABLENDENABLE      7   // Alpha blending enable
+#define D3DRS_SRCBLEND              8   // Source blend factor
+#define D3DRS_DESTBLEND             9   // Destination blend factor
+#define D3DRS_SRCBLENDALPHA         10  // Source alpha blend factor
+#define D3DRS_DESTBLENDALPHA        11  // Destination alpha blend factor
+#define D3DRS_ALPHATESTENABLE       12  // Alpha test enable
+#define D3DRS_ALPHAREF              13  // Alpha reference value
+#define D3DRS_LIGHTING              14  // Lighting enable (fixed-function)
+#define D3DRS_FOGENABLE             15  // Fog enable
 
 // DirectX sampler states (texture sampling parameters)
 #define D3DSAMP_ADDRESSU            0   // U coordinate addressing mode
@@ -184,6 +195,13 @@ using InputElementDesc = VertexElement;  // Alias for compatibility
 
 // DirectX texture stage states (texture coordinate transformation)
 #define D3DTSS_TEXTURETRANSFORMFLAGS 10 // Texture coordinate transform flags
+#define D3DTSS_TEXCOORDINDEX        11  // Texture coordinate index
+
+// DirectX texture coordinate index generation (D3DTSS_TEXCOORDINDEX values)
+#define D3DTSS_TCI_PASSTHRU                     0x00000000  // Use vertex texture coordinates
+#define D3DTSS_TCI_CAMERASPACEPOSITION          0x00010000  // Generate from camera space position
+#define D3DTSS_TCI_CAMERASPACENORMAL            0x00020000  // Generate from camera space normal
+#define D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR  0x00030000  // Generate from camera space reflection
 
 // DirectX texture transform flags
 #define D3DTTFF_DISABLE             0   // Disable texture coordinate transformation
@@ -220,11 +238,14 @@ using IndexBufferHandle = GLuint;
 #include "xrEngine/Properties.h"
 
 // Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
-// CHW class with immediate context ID constant - MUST be defined BEFORE R_Backend.h
+// Forward declare CHW with IMM_CTX_ID - MUST be defined BEFORE R_Backend.h
+// Full CHW definition is in glHW.h (included after R_Backend.h to avoid circular dependency)
 namespace xray::render::RENDER_NAMESPACE {
+    class CHWCaps;  // Forward declaration
     class CHW {
     public:
         static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
+        CHWCaps Caps;  // Hardware capabilities (needed by Blender_Recorder.cpp)
     };
 }
 
@@ -233,13 +254,35 @@ namespace xray::render::RENDER_NAMESPACE {
 #include "Layers/xrRender/Shader.h"
 #include "Layers/xrRender/Blender.h"           // IBlender base class
 #include "Layers/xrRender/Blender_Recorder.h"  // CBlender_Compile definition
+
+// Forward declare CResourceManager (shader/texture resource manager)
+// Full implementation will be in xrRenderGL backend
+namespace xray::render::RENDER_NAMESPACE {
+    class CResourceManager;
+}
+
 #include "Layers/xrRender/R_Backend.h"         // CBackend definition (uses CHW::IMM_CTX_ID)
+
+// RImplementation wrapper class - extends CBackend with additional fields
+// xrRender code expects RImplementation to have Resources field and blender methods
+namespace xray::render::RENDER_NAMESPACE {
+    class CRenderImplementation : public CBackend {
+    public:
+        CResourceManager* Resources = nullptr;  // Shader/texture resource manager
+        
+        // Blender management methods (shader material compilation)
+        IBlender* blender_create(CLASS_ID cls);
+        void blender_destroy(IBlender*& B);
+        
+        // Immediate context accessor (for RCache macro)
+        CBackend& get_imm_context() { return *this; }
+    };
+}
 
 // Global renderer objects (forward declarations for OpenGL ES)
 // These are defined in xrRenderGL backend but referenced in shared xrRender code
 namespace xray::render::gl {
     class CRenderTarget;
-    class CBackend;
 }
 
 // R1 renderer flags (legacy DirectX 9 renderer settings, unused in OpenGL ES)
@@ -249,9 +292,11 @@ extern Flags32 ps_r1_flags;
 
 // Global renderer implementation object (defined in xrRenderGL, stubbed here)
 // Use macro to dereference pointer so code can use . operator instead of ->
-extern xray::render::RENDER_NAMESPACE::CBackend* _RImplementation_ptr;
+extern xray::render::RENDER_NAMESPACE::CRenderImplementation* _RImplementation_ptr;
 #define RImplementation (*_RImplementation_ptr)
 
-// Global device object (defined in xrEngine, available via GEnv)
-// IRender doesn't have GetDevice() method, use direct cast instead
-#define Device (*((IRenderDevice*)GEnv.Render))
+// Global hardware object (defined in xrRenderGL glHW.cpp)
+extern xray::render::RENDER_NAMESPACE::CHW HW;
+
+// Device object is available via GEnv global environment
+// Code should use GEnv.Render or GEnv.Render->... directly, no Device macro needed
