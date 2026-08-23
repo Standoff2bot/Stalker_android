@@ -399,7 +399,13 @@ namespace xray::render::RENDER_NAMESPACE {
         void blender_destroy(IBlender*& B);
         
         // Shader management method (used by FBasicVisual.cpp)
-        void* getShader(int) { return nullptr; }
+        ref_shader getShader(int) { return ref_shader(); }
+        
+        // Visual model management methods (used by FHierrarhyVisual.cpp)
+        void* getVisual(int) { return nullptr; }
+        void model_Delete(void*) {}
+        void* model_CreateChild(const char*, IReader*) { return nullptr; }
+        void* model_Duplicate(void*) { return nullptr; }
         
         // Immediate context accessor (for RCache macro)
         CBackend& get_imm_context() { return *this; }
