@@ -44,6 +44,14 @@ using D3DPRIMITIVETYPE = GLenum; // Primitive types (GL_TRIANGLES, GL_LINES, etc
 using D3DRENDERSTATETYPE = u32;  // Render state type (DirectX state IDs)
 using D3DSAMPLERSTATETYPE = u32; // Sampler state type (DirectX sampler state IDs)
 
+// DirectX primitive topology constants (map to OpenGL ES primitive types)
+#define D3DPT_POINTLIST     GL_POINTS          // Point list
+#define D3DPT_LINELIST      GL_LINES           // Line list
+#define D3DPT_LINESTRIP     GL_LINE_STRIP      // Line strip
+#define D3DPT_TRIANGLELIST  GL_TRIANGLES       // Triangle list (CRITICAL: used by FProgressive.cpp)
+#define D3DPT_TRIANGLESTRIP GL_TRIANGLE_STRIP  // Triangle strip
+#define D3DPT_TRIANGLEFAN   GL_TRIANGLE_FAN    // Triangle fan
+
 // DirectX viewport structure
 struct D3D_VIEWPORT {
     float TopLeftX;
@@ -388,7 +396,13 @@ namespace xray::render::RENDER_NAMESPACE {
             u32 ffp = 0;                    // Fixed-function pipeline flags
             u32 no_detail_textures = 0;     // Disable detail textures flag
         } o;
-        
+
+        // Vertex buffers for common geometry (used by FLOD.cpp)
+        struct {
+            void* Buffer() { return nullptr; }  // Vertex buffer handle
+        } Vertex;
+        void* QuadIB = nullptr;  // Quad index buffer (2 triangles = 6 indices)
+
         // Basic rendering statistics (profiler timers)
         struct {
             u32 Primitives = 0;             // Number of primitives rendered
@@ -397,21 +411,24 @@ namespace xray::render::RENDER_NAMESPACE {
             CStatTimer DetailVisibility;    // Detail visibility profiler
             CStatTimer DetailRender;        // Detail render profiler
         } BasicStats;
-        
+
         // Blender management methods (shader material compilation)
         IBlender* blender_create(CLASS_ID cls);
         void blender_destroy(IBlender*& B);
-        
+
         // Shader management method (used by FBasicVisual.cpp)
         ref_shader getShader(int) { return ref_shader(); }
-        
+
         // Visual model management methods (used by FHierrarhyVisual.cpp)
         void* getVisual(int) { return nullptr; }
-        void model_Delete(void*) {}
+        void model_Delete(void*, bool = false) {}  // 2nd param: bDiscard (default false)
         void* model_CreateChild(const char*, IReader*) { return nullptr; }
         void* model_Duplicate(void*) { return nullptr; }
-        
+
         // Immediate context accessor (for RCache macro)
+        // RCache macro expands to: RImplementation.get_imm_context().cmd_list
+        // cmd_list should be a reference to CBackend itself (self-reference)
+        CBackend& cmd_list = *this;  // Self-reference for RCache.set_Geometry(), RCache.Render(), etc.
         CBackend& get_imm_context() { return *this; }
     };
 }
