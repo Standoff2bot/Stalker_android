@@ -237,11 +237,13 @@ using IndexBufferHandle = GLuint;
 // Property system for shader blenders (xrP_TOKEN, xrP_Integer, xrP_BOOL)
 #include "xrEngine/Properties.h"
 
+// Hardware capabilities class (needed by CHW)
+#include "Layers/xrRender/HWCaps.h"
+
 // Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
 // Forward declare CHW with IMM_CTX_ID - MUST be defined BEFORE R_Backend.h
 // Full CHW definition is in glHW.h (included after R_Backend.h to avoid circular dependency)
 namespace xray::render::RENDER_NAMESPACE {
-    class CHWCaps;  // Forward declaration
     class CHW {
     public:
         static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
