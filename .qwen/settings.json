@@ -125,7 +125,8 @@
       "Bash(timeout *)",
       "Read(//data/data/com.termux/files/home/**)",
       "Bash(rish *)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(chmod *)"
     ]
   },
   "$version": 4

@@ -1,0 +1,37 @@
+#!/usr/bin/expect -f
+
+# Проверяем, передан ли session ID
+if {[llength $argv] == 0} {
+    send_user "Использование: ./qwen_auto_retry.exp <session-id>\n"
+    send_user "Пример: ./qwen_auto_retry.exp 2144d265-5ebd-4d2d-a571-4973821c0084\n"
+    exit 1
+}
+set session_id [lindex $argv 0]
+
+# Бесконечный таймаут на ожидание (ждём сколько угодно)
+set timeout -1
+
+# Запускаем Qwen с возобновлением сессии
+spawn qwen --resume $session_id
+
+# Основной бесконечный цикл обработки ошибок
+while {1} {
+    expect {
+        # Точное совпадение с сообщением об ошибке
+        -exact {(Press Ctrl+Y to retry)} {
+            # Ждём 10 секунд перед повторной попыткой
+            sleep 10
+            # Отправляем Ctrl+Y (код 19) и Enter
+            send "\x19"
+            send "\r"
+            # Небольшая пауза, чтобы не заспамить
+            sleep 1
+        }
+        # Если Qwen завершился (сессия закончилась) — выходим
+        eof {
+            send_user "Сессия завершена.\n"
+            break
+        }
+        # Если появилось что-то другое — просто продолжаем ждать
+    }
+}

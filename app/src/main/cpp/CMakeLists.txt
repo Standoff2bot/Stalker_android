@@ -150,6 +150,10 @@ list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*Device_create.*")
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*Text_Console.*")
 list(FILTER XRENGINE_SOURCES EXCLUDE REGEX ".*tntQAVI.*")
 add_library(xrEngine STATIC ${XRENGINE_SOURCES})
+# Force-include SDL_stub.h for xrEngine (device.h, xr_input.h use SDL types)
+set_target_properties(xrEngine PROPERTIES
+    COMPILE_FLAGS "-include ${CMAKE_CURRENT_SOURCE_DIR}/SDL_stub.h"
+)
 target_link_libraries(xrEngine PRIVATE
     xrCore
     xrCDB
