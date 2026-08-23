@@ -326,7 +326,11 @@ namespace xray::render::RENDER_NAMESPACE {
     public:
         // Stub methods and fields for DetailManager.cpp
         bool IsSOccluded(void*, float) { return false; }
-        struct { bool box; } visible;  // Visibility flags
+        // Visibility flags struct with call operator
+        struct {
+            bool box;
+            bool operator()(void*) { return false; }  // Callable for HOM->visible(obj)
+        } visible;
     };
     
     // Simple profiler timer stub for BasicStats (Begin/End methods)
@@ -338,12 +342,18 @@ namespace xray::render::RENDER_NAMESPACE {
 
 // Global game level pointer (used in DetailManager_Decompress.cpp)
 // Forward declare CLevel with needed fields
+class CObjectSpace {
+public:
+    void* GetStaticRoot() { return nullptr; }
+};
+
 class CLevel {
 public:
     struct {
         bool trees_enabled;
         bool details_enabled;
     } g_fShadowDetailPlotSize;
+    CObjectSpace ObjectSpace;  // Object space for collision detection
 };
 extern CLevel* g_pGameLevel;
 
