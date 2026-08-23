@@ -209,13 +209,13 @@ extern Flags32 ps_r1_flags;
 extern xray::render::RENDER_NAMESPACE::CBackend* RImplementation;
 
 // Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
+// CHW class with immediate context ID constant
 namespace xray::render::RENDER_NAMESPACE {
     class CHW {
     public:
         static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
     };
 }
-extern xray::render::RENDER_NAMESPACE::CHW* CHW;
 
 // Global device object (defined in xrEngine, available via GEnv)
 #define Device (*GEnv.Render->GetDevice())
