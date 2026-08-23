@@ -164,13 +164,46 @@ using InputElementDesc = VertexElement;  // Alias for compatibility
 #define D3DTA_ALPHAREPLICATE    0x00000020  // Replicate alpha to color components
 
 // DirectX render states (legacy fixed-function pipeline state)
-#define D3DRS_TEXTUREFACTOR     0           // Texture factor constant (RGBA)
+#define D3DRS_TEXTUREFACTOR         0   // Texture factor constant (RGBA)
+#define D3DRS_COLORWRITEENABLE      1   // Color write enable mask
+#define D3DRS_COLORWRITEENABLE1     2   // Color write enable mask for RT1
+#define D3DRS_COLORWRITEENABLE2     3   // Color write enable mask for RT2
+#define D3DRS_COLORWRITEENABLE3     4   // Color write enable mask for RT3
+
+// DirectX sampler states (texture sampling parameters)
+#define D3DSAMP_ADDRESSU            0   // U coordinate addressing mode
+#define D3DSAMP_ADDRESSV            1   // V coordinate addressing mode
+#define D3DSAMP_ADDRESSW            2   // W coordinate addressing mode
+#define D3DSAMP_BORDERCOLOR         3   // Border color for D3DTADDRESS_BORDER
+#define D3DSAMP_MAGFILTER           4   // Magnification filter
+#define D3DSAMP_MINFILTER           5   // Minification filter
+#define D3DSAMP_MIPFILTER           6   // Mipmap filter
+#define D3DSAMP_MIPMAPLODBIAS       7   // Mipmap LOD bias
+#define D3DSAMP_MAXMIPLEVEL         8   // Maximum mipmap level
+#define D3DSAMP_MAXANISOTROPY       9   // Maximum anisotropy level
+
+// DirectX texture stage states (texture coordinate transformation)
+#define D3DTSS_TEXTURETRANSFORMFLAGS 10 // Texture coordinate transform flags
+
+// DirectX texture transform flags
+#define D3DTTFF_DISABLE             0   // Disable texture coordinate transformation
+#define D3DTTFF_COUNT1              1   // 1D texture coordinates
+#define D3DTTFF_COUNT2              2   // 2D texture coordinates
+#define D3DTTFF_COUNT3              3   // 3D texture coordinates
+#define D3DTTFF_COUNT4              4   // 4D texture coordinates
+#define D3DTTFF_PROJECTED           256 // Projected texture coordinates (divide by w)
+
+// DirectX texture filter modes (additional)
+#define D3DTEXF_GAUSSIANQUAD        GL_LINEAR  // Gaussian quad filter (fallback to linear)
 
 // Blender class IDs (shader material types)
 #define B_DEFAULT               0
 #define B_PARTICLE              1
 #define B_SHADOW_TEX            2
 #define B_LIGHT                 3
+
+// Render configuration variables (anisotropic filtering level)
+extern int ps_r__tf_Anisotropic;
 
 // Render state object (DirectX ID3D11SamplerState equivalent)
 // In OpenGL we don't have state objects, just direct state setting
@@ -215,7 +248,10 @@ extern Flags32 ps_r1_flags;
 #define R1FLAG_DLIGHTS          (1 << 1)
 
 // Global renderer implementation object (defined in xrRenderGL, stubbed here)
-extern xray::render::RENDER_NAMESPACE::CBackend* RImplementation;
+// Use macro to dereference pointer so code can use . operator instead of ->
+extern xray::render::RENDER_NAMESPACE::CBackend* _RImplementation_ptr;
+#define RImplementation (*_RImplementation_ptr)
 
 // Global device object (defined in xrEngine, available via GEnv)
-#define Device (*GEnv.Render->GetDevice())
+// IRender doesn't have GetDevice() method, use direct cast instead
+#define Device (*((IRenderDevice*)GEnv.Render))
