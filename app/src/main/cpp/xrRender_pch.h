@@ -186,12 +186,21 @@ using IndexBufferHandle = GLuint;
 // Property system for shader blenders (xrP_TOKEN, xrP_Integer, xrP_BOOL)
 #include "xrEngine/Properties.h"
 
+// Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
+// CHW class with immediate context ID constant - MUST be defined BEFORE R_Backend.h
+namespace xray::render::RENDER_NAMESPACE {
+    class CHW {
+    public:
+        static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
+    };
+}
+
 // Shader resource pointers (ref_shader, ref_geom, ref_constant)
 // Include actual definitions from xrRender, not void* placeholders
 #include "Layers/xrRender/Shader.h"
 #include "Layers/xrRender/Blender.h"           // IBlender base class
 #include "Layers/xrRender/Blender_Recorder.h"  // CBlender_Compile definition
-#include "Layers/xrRender/R_Backend.h"         // CBackend definition
+#include "Layers/xrRender/R_Backend.h"         // CBackend definition (uses CHW::IMM_CTX_ID)
 
 // Global renderer objects (forward declarations for OpenGL ES)
 // These are defined in xrRenderGL backend but referenced in shared xrRender code
@@ -207,15 +216,6 @@ extern Flags32 ps_r1_flags;
 
 // Global renderer implementation object (defined in xrRenderGL, stubbed here)
 extern xray::render::RENDER_NAMESPACE::CBackend* RImplementation;
-
-// Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
-// CHW class with immediate context ID constant
-namespace xray::render::RENDER_NAMESPACE {
-    class CHW {
-    public:
-        static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
-    };
-}
 
 // Global device object (defined in xrEngine, available via GEnv)
 #define Device (*GEnv.Render->GetDevice())
