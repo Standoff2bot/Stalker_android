@@ -327,6 +327,13 @@ namespace xray::render::RENDER_NAMESPACE {
     struct vis_data {
         struct { Fvector P; float R; } sphere;  // Bounding sphere
         Fbox box;                                // Bounding box
+        
+        // Clear method (used in DetailManager code)
+        void clear() {
+            sphere.P.set(0, 0, 0);
+            sphere.R = 0;
+            box.invalidate();
+        }
     };
     
     class CHOM {           // Hardware Occlusion Manager
