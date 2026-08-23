@@ -329,7 +329,8 @@ namespace xray::render::RENDER_NAMESPACE {
         // Visibility flags struct with call operator
         struct {
             bool box;
-            bool operator()(void*) { return false; }  // Callable for HOM->visible(obj)
+            // Callable for HOM->visible(box) - takes box parameter
+            bool operator()(const Fbox&) { return false; }
         } visible;
     };
     
@@ -345,6 +346,9 @@ namespace xray::render::RENDER_NAMESPACE {
 class CObjectSpace {
 public:
     void* GetStaticRoot() { return nullptr; }
+    void* GetStaticModel() { return nullptr; }
+    void* GetStaticTris() { return nullptr; }
+    void* GetStaticVerts() { return nullptr; }
 };
 
 class CLevel {
