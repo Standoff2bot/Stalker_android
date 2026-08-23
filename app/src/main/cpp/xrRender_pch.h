@@ -314,16 +314,8 @@ namespace xray::render::RENDER_NAMESPACE {
 #include "Layers/xrRender/Blender.h"           // IBlender base class
 #include "Layers/xrRender/Blender_Recorder.h"  // CBlender_Compile definition
 
-// Forward declare CResourceManager (shader/texture resource manager)
-// Full implementation will be in xrRenderGL backend
-namespace xray::render::RENDER_NAMESPACE {
-    class CResourceManager {
-    public:
-        // Stub methods for ColorMapManager.cpp
-        void* _CreateBlender(const char*) { return nullptr; }
-        void _DeleteBlender(void*) {}
-    };
-}
+// CResourceManager - shader/texture resource manager (real implementation, not stub!)
+#include "Layers/xrRender/ResourceManager.h"
 
 #include "Layers/xrRender/R_Backend.h"         // CBackend definition (uses CHW::IMM_CTX_ID)
 
