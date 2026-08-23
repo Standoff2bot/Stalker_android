@@ -324,8 +324,9 @@ namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
     class CHOM {           // Hardware Occlusion Manager
     public:
-        // Stub methods for DetailManager.cpp
+        // Stub methods and fields for DetailManager.cpp
         bool IsSOccluded(void*, float) { return false; }
+        struct { bool box; } visible;  // Visibility flags
     };
     
     // Simple profiler timer stub for BasicStats (Begin/End methods)
@@ -336,7 +337,14 @@ namespace xray::render::RENDER_NAMESPACE {
 }
 
 // Global game level pointer (used in DetailManager_Decompress.cpp)
-class CLevel;
+// Forward declare CLevel with needed fields
+class CLevel {
+public:
+    struct {
+        bool trees_enabled;
+        bool details_enabled;
+    } g_fShadowDetailPlotSize;
+};
 extern CLevel* g_pGameLevel;
 
 // RImplementation wrapper class - extends CBackend with additional fields
@@ -368,6 +376,9 @@ namespace xray::render::RENDER_NAMESPACE {
         // Blender management methods (shader material compilation)
         IBlender* blender_create(CLASS_ID cls);
         void blender_destroy(IBlender*& B);
+        
+        // Shader management method (used by FBasicVisual.cpp)
+        void* getShader(int) { return nullptr; }
         
         // Immediate context accessor (for RCache macro)
         CBackend& get_imm_context() { return *this; }
