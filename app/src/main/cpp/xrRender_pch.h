@@ -279,6 +279,12 @@ namespace xray::render::RENDER_NAMESPACE {
 namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
     class CHOM;            // Hardware Occlusion Manager
+    
+    // Simple profiler timer stub for BasicStats (Begin/End methods)
+    struct CStatTimer {
+        void Begin() {}
+        void End() {}
+    };
 }
 
 // RImplementation wrapper class - extends CBackend with additional fields
@@ -296,15 +302,15 @@ namespace xray::render::RENDER_NAMESPACE {
         struct {
             u32 ffp = 0;                    // Fixed-function pipeline flags
             u32 no_detail_textures = 0;     // Disable detail textures flag
-            u32 DetailCache = 0;            // Detail cache flags
-            u32 DetailVisibility = 0;       // Detail visibility flags
-            u32 DetailRender = 0;           // Detail render flags
         } o;
         
-        // Basic rendering statistics
+        // Basic rendering statistics (profiler timers)
         struct {
-            u32 Primitives = 0;   // Number of primitives rendered
-            u32 Vertices = 0;     // Number of vertices rendered
+            u32 Primitives = 0;             // Number of primitives rendered
+            u32 Vertices = 0;               // Number of vertices rendered
+            CStatTimer DetailCache;         // Detail cache profiler
+            CStatTimer DetailVisibility;    // Detail visibility profiler
+            CStatTimer DetailRender;        // Detail render profiler
         } BasicStats;
         
         // Blender management methods (shader material compilation)
