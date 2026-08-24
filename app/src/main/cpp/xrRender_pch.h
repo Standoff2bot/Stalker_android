@@ -289,6 +289,10 @@ using ID3DState = void*;        // Placeholder - OpenGL doesn't use state object
 using VertexBufferHandle = GLuint;
 using IndexBufferHandle = GLuint;
 
+// IRenderVisual and IKinematics interfaces (needed for covariance in SkeletonCustom.h)
+#include "Include/xrRender/RenderVisual.h"
+#include "Include/xrRender/Kinematics.h"
+
 // Rendering types from xrEngine
 #include "xrEngine/Render.h"
 #include "xrEngine/device.h"        // CRenderDevice (Device object)
@@ -380,28 +384,34 @@ public:
 };
 extern CLevel* g_pGameLevel;
 
-// RImplementation wrapper class - extends CBackend with additional fields
-// xrRender code expects RImplementation to have Resources field and blender methods
+// R_dsgraph_structure - scene graph context with command list (RCache backend)
+// RCache macro expands to: RImplementation.get_imm_context().cmd_list
 namespace xray::render::RENDER_NAMESPACE {
-    class CRenderImplementation : public CBackend {
+    struct R_dsgraph_structure {
+        CBackend cmd_list;  // Command list for RCache.set_Geometry(), RCache.Render(), etc.
+    };
+
+    // RImplementation wrapper class with Resources and subsystems
+    // xrRender code expects RImplementation to have Resources field and blender methods
+    class CRenderImplementation {
     public:
         CResourceManager* Resources = nullptr;  // Shader/texture resource manager
-        
+
         // Rendering subsystems (used by various xrRender modules)
         CDetailManager* Details = nullptr;      // Detail geometry manager
         CHOM HOM;                                // Hardware occlusion manager (object, not pointer!)
-        
+
         // Render state flags (legacy DirectX 9 renderer)
         struct {
             u32 ffp = 0;                    // Fixed-function pipeline flags
             u32 no_detail_textures = 0;     // Disable detail textures flag
         } o;
 
-        // Vertex buffers for common geometry (used by FLOD.cpp)
+        // Vertex buffers for common geometry (used by FLOD.cpp, FSkinned.cpp)
         struct {
-            void* Buffer() { return nullptr; }  // Vertex buffer handle
+            VertexBufferHandle Buffer() { return 0; }  // Return VB handle (unsigned int), not void*
         } Vertex;
-        void* QuadIB = nullptr;  // Quad index buffer (2 triangles = 6 indices)
+        IndexBufferHandle QuadIB = 0;  // Quad index buffer (2 triangles = 6 indices)
 
         // Basic rendering statistics (profiler timers)
         struct {
@@ -425,11 +435,19 @@ namespace xray::render::RENDER_NAMESPACE {
         void* model_CreateChild(const char*, IReader*) { return nullptr; }
         void* model_Duplicate(void*) { return nullptr; }
 
+        // Vertex/Index buffer accessors (used by FVisual.cpp)
+        VertexBufferHandle* getVB(int, bool = false) { return nullptr; }
+        IndexBufferHandle* getIB(int, bool = false) { return nullptr; }
+        void* getVB_Format(int, bool = false) { return nullptr; }
+        bool IsFastGeomSupported() { return false; }
+
+        // Shader skinning option (used by FSkinned.cpp)
+        void shader_option_skinning(int) {}
+
         // Immediate context accessor (for RCache macro)
         // RCache macro expands to: RImplementation.get_imm_context().cmd_list
-        // cmd_list should be a reference to CBackend itself (self-reference)
-        CBackend& cmd_list = *this;  // Self-reference for RCache.set_Geometry(), RCache.Render(), etc.
-        CBackend& get_imm_context() { return *this; }
+        R_dsgraph_structure imm_context;
+        R_dsgraph_structure& get_imm_context() { return imm_context; }
     };
 }
 
@@ -463,3 +481,23 @@ extern float ps_r__Detail_height;       // Detail height threshold
 extern int ps_current_detail_height;    // Current detail LOD height
 extern u32 rsDrawDetails;               // Render state: draw detail geometry flag
 extern Flags32 psDeviceFlags;           // Device configuration flags
+extern Flags32 ps_r1_force_geomx;       // R1 force fast geometry flag (used by FVisual.cpp)
+
+// Smart pointers for render objects (intrusive reference counting)
+// Used by SkeletonCustom.h for CSkeletonWallmark management
+template<typename T>
+class intrusive_ptr {
+    T* ptr = nullptr;
+public:
+    intrusive_ptr() = default;
+    intrusive_ptr(T* p) : ptr(p) {}
+    T* get() const { return ptr; }
+    T* operator->() const { return ptr; }
+    T& operator*() const { return *ptr; }
+};
+
+// Intrusive base class for reference counting (used by CSkeletonWallmark)
+class intrusive_base {
+public:
+    virtual ~intrusive_base() = default;
+};
