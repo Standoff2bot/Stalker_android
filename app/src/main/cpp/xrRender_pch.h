@@ -372,8 +372,8 @@ namespace xray::render::RENDER_NAMESPACE {
     };
 }
 
-// Global game level pointer (forward declaration - real definition in xrEngine/IGame_Level.h)
-class IGame_Level;
+// Global game level pointer (full definition needed for ObjectSpace access in DetailManager_Decompress.cpp)
+#include "xrEngine/IGame_Level.h"
 extern IGame_Level* g_pGameLevel;
 
 // R_dsgraph_structure - scene graph context with command list (RCache backend)
