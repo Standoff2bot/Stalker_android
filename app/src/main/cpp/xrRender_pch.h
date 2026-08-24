@@ -289,6 +289,15 @@ using ID3DState = void*;        // Placeholder - OpenGL doesn't use state object
 using VertexBufferHandle = GLuint;
 using IndexBufferHandle = GLuint;
 
+// Forward declarations for buffer staging classes (defined in BufferUtils.h)
+namespace xray::render::RENDER_NAMESPACE {
+    class VertexStagingBuffer;
+    class IndexStagingBuffer;
+}
+
+// DirectX vertex element descriptor (D3DVERTEXELEMENT9 equivalent for OGF_GContainer_Vertices.hpp)
+using D3DVERTEXELEMENT9 = VertexElement;
+
 // IRenderVisual and IKinematics interfaces (needed for covariance in SkeletonCustom.h)
 #include "Include/xrRender/RenderVisual.h"
 #include "Include/xrRender/Kinematics.h"
@@ -309,6 +318,9 @@ using IndexBufferHandle = GLuint;
 // Visibility data structure (vis_data with sphere, box, clear() method)
 #include "xrEngine/vis_common.h"
 
+// Collision detection definitions (collide::ray_cache needed by LightTrack.h)
+#include "xrCDB/xr_collide_defs.h"
+
 // Hardware capabilities class (needed by CHW)
 #include "Layers/xrRender/HWCaps.h"
 
@@ -321,6 +333,9 @@ namespace xray::render::RENDER_NAMESPACE {
         static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
         CHWCaps Caps;  // Hardware capabilities (needed by Blender_Recorder.cpp)
     };
+    
+    // Forward declaration for light class (used by LightTrack.h)
+    class light;
 }
 
 // Shader resource pointers (ref_shader, ref_geom, ref_constant)
@@ -357,32 +372,9 @@ namespace xray::render::RENDER_NAMESPACE {
     };
 }
 
-// Global game level pointer (used in DetailManager_Decompress.cpp)
-// Forward declare CLevel with needed fields
-
-// Forward declare CDB types for CObjectSpace methods
-namespace CDB {
-    class MODEL;
-    struct TRI;
-}
-
-class CObjectSpace {
-public:
-    void* GetStaticRoot() { return nullptr; }
-    CDB::MODEL* GetStaticModel() { return nullptr; }
-    CDB::TRI* GetStaticTris() { return nullptr; }
-    Fvector* GetStaticVerts() { return nullptr; }
-};
-
-class CLevel {
-public:
-    struct {
-        bool trees_enabled;
-        bool details_enabled;
-    } g_fShadowDetailPlotSize;
-    CObjectSpace ObjectSpace;  // Object space for collision detection
-};
-extern CLevel* g_pGameLevel;
+// Global game level pointer (forward declaration - real definition in xrEngine/IGame_Level.h)
+class IGame_Level;
+extern IGame_Level* g_pGameLevel;
 
 // R_dsgraph_structure - scene graph context with command list (RCache backend)
 // RCache macro expands to: RImplementation.get_imm_context().cmd_list
@@ -435,14 +427,18 @@ namespace xray::render::RENDER_NAMESPACE {
         void* model_CreateChild(const char*, IReader*) { return nullptr; }
         void* model_Duplicate(void*) { return nullptr; }
 
-        // Vertex/Index buffer accessors (used by FVisual.cpp)
-        VertexBufferHandle* getVB(int, bool = false) { return nullptr; }
-        IndexBufferHandle* getIB(int, bool = false) { return nullptr; }
-        void* getVB_Format(int, bool = false) { return nullptr; }
+        // Vertex/Index buffer accessors (used by FVisual.cpp, FTreeVisual.cpp)
+        // Return VertexStagingBuffer/IndexStagingBuffer pointers, not raw handles
+        VertexStagingBuffer* getVB(int, bool = false) { return nullptr; }
+        IndexStagingBuffer* getIB(int, bool = false) { return nullptr; }
+        VertexElement* getVB_Format(int, bool = false) { return nullptr; }
         bool IsFastGeomSupported() { return false; }
 
         // Shader skinning option (used by FSkinned.cpp)
         void shader_option_skinning(int) {}
+
+        // SWI (software instancing?) accessor (used by FTreeVisual.cpp)
+        void* getSWI() { return nullptr; }
 
         // Immediate context accessor (for RCache macro)
         // RCache macro expands to: RImplementation.get_imm_context().cmd_list
@@ -482,6 +478,13 @@ extern int ps_current_detail_height;    // Current detail LOD height
 extern u32 rsDrawDetails;               // Render state: draw detail geometry flag
 extern Flags32 psDeviceFlags;           // Device configuration flags
 extern Flags32 ps_r1_force_geomx;       // R1 force fast geometry flag (used by FVisual.cpp)
+
+// Tree rendering configuration (used by FTreeVisual.cpp)
+extern Flags32 ps_r__Tree_SBC;          // Tree speed-tree billboard clouds flag
+
+// R2/R3/R4 renderer configuration (dynamic lighting, hemispheric lighting)
+extern int ps_r2_dhemi_count;           // Dynamic hemispheric light sample count
+extern float ps_r2_dhemi_sky_scale;     // Dynamic hemispheric sky light scale
 
 // Smart pointers for render objects (intrusive reference counting)
 // Used by SkeletonCustom.h for CSkeletonWallmark management
