@@ -352,24 +352,16 @@ namespace xray::render::RENDER_NAMESPACE {
 // Forward declarations for RImplementation subsystems
 namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
-    
-    class CHOM {           // Hardware Occlusion Manager
-    public:
-        // Stub methods and fields for DetailManager.cpp
-        bool IsSOccluded(void*, float) { return false; }
-        // Visibility flags struct with call operator
-        struct {
-            bool box;
-            // Callable for HOM.visible(S.vis) - takes vis_data structure from vis_common.h
-            bool operator()(const vis_data&) { return true; }  // Always visible for stub
-        } visible;
-    };
-    
+    class CHOM;            // Hardware Occlusion Manager (forward declaration - full definition in HOM.h)
+
     // Simple profiler timer stub for BasicStats (Begin/End methods)
     struct CStatTimer {
         void Begin() {}
         void End() {}
     };
+    
+    // Renderer-specific visual class (DirectX/OpenGL implementation)
+    using dxRender_Visual = IRenderVisual;
 }
 
 // Global game level pointer (full definition needed for ObjectSpace access in DetailManager_Decompress.cpp)
@@ -391,7 +383,12 @@ namespace xray::render::RENDER_NAMESPACE {
 
         // Rendering subsystems (used by various xrRender modules)
         CDetailManager* Details = nullptr;      // Detail geometry manager
-        CHOM HOM;                                // Hardware occlusion manager (object, not pointer!)
+        CHOM* HOM = nullptr;                    // Hardware occlusion manager (pointer!)
+
+        // Dynamic lighting system (used by Light_DB.cpp, LightTrack.cpp)
+        void* L_Dynamic = nullptr;              // Dynamic lights container
+        bool is_sun_static = false;             // Sun is static flag
+        void* Lights = nullptr;                 // Lights container for LightTrack
 
         // Render state flags (legacy DirectX 9 renderer)
         struct {
@@ -437,8 +434,10 @@ namespace xray::render::RENDER_NAMESPACE {
         // Shader skinning option (used by FSkinned.cpp)
         void shader_option_skinning(int) {}
 
-        // SWI (software instancing?) accessor (used by FTreeVisual.cpp)
-        void* getSWI() { return nullptr; }
+        // SWI (slide window item) accessor (used by FTreeVisual.cpp)
+        // Returns FSlideWindowItem*, not void*
+        struct FSlideWindowItem;  // Forward declaration
+        FSlideWindowItem* getSWI(int) { return nullptr; }
 
         // Immediate context accessor (for RCache macro)
         // RCache macro expands to: RImplementation.get_imm_context().cmd_list
@@ -477,14 +476,18 @@ extern float ps_r__Detail_height;       // Detail height threshold
 extern int ps_current_detail_height;    // Current detail LOD height
 extern u32 rsDrawDetails;               // Render state: draw detail geometry flag
 extern Flags32 psDeviceFlags;           // Device configuration flags
-extern Flags32 ps_r1_force_geomx;       // R1 force fast geometry flag (used by FVisual.cpp)
+extern u32 ps_r1_force_geomx;           // R1 force fast geometry flag (used by FVisual.cpp) - u32 not Flags32!
 
 // Tree rendering configuration (used by FTreeVisual.cpp)
-extern Flags32 ps_r__Tree_SBC;          // Tree speed-tree billboard clouds flag
+extern float ps_r__Tree_SBC;            // Tree speed-tree billboard clouds - float not Flags32!
 
-// R2/R3/R4 renderer configuration (dynamic lighting, hemispheric lighting)
+// R2/R3/R4 renderer configuration (dynamic lighting, hemispheric lighting, sun)
 extern int ps_r2_dhemi_count;           // Dynamic hemispheric light sample count
 extern float ps_r2_dhemi_sky_scale;     // Dynamic hemispheric sky light scale
+extern float ps_r2_sun_lumscale;        // Sun luminance scale (used by Light_DB.cpp)
+
+// Game mode configuration (used by Light_DB.cpp)
+extern bool ShadowOfChernobylMode;      // Shadow of Chernobyl compatibility mode
 
 // Smart pointers for render objects (intrusive reference counting)
 // Used by SkeletonCustom.h for CSkeletonWallmark management
