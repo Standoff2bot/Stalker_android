@@ -325,8 +325,9 @@ using D3DVERTEXELEMENT9 = VertexElement;
 #include "Layers/xrRender/HWCaps.h"
 
 // Blender CLASS_ID constants (B_DEFAULT, B_SHADOW_WORLD, etc.)
-// Import make_clsid from xray namespace before including Blender_CLSID.h
-namespace xray::render::RENDER_NAMESPACE {
+// Blender_CLSID.h uses make_clsid() from namespace xray inside namespace xray::render::RENDER_NAMESPACE
+// Import make_clsid into render namespace BEFORE including the header
+namespace xray::render {
     using xray::make_clsid;
 }
 #include "Layers/xrRender/Blender_CLSID.h"
