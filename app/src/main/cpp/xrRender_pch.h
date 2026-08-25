@@ -367,9 +367,6 @@ namespace xray::render::RENDER_NAMESPACE {
         void Begin() {}
         void End() {}
     };
-    
-    // Renderer-specific visual class (DirectX/OpenGL implementation)
-    using dxRender_Visual = IRenderVisual;
 }
 
 // Global game level pointer (full definition needed for ObjectSpace access in DetailManager_Decompress.cpp)
