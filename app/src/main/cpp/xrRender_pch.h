@@ -324,6 +324,9 @@ using D3DVERTEXELEMENT9 = VertexElement;
 // Hardware capabilities class (needed by CHW)
 #include "Layers/xrRender/HWCaps.h"
 
+// Blender CLASS_ID constants (B_DEFAULT, B_SHADOW_WORLD, etc.)
+#include "Layers/xrRender/Blender_CLSID.h"
+
 // Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
 // Forward declare CHW with IMM_CTX_ID - MUST be defined BEFORE R_Backend.h
 // Full CHW definition is in glHW.h (included after R_Backend.h to avoid circular dependency)
