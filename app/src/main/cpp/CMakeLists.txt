@@ -184,6 +184,8 @@ list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*dxRain.*")
 list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*dxThunderbolt.*")
 # Exclude DirectX 11 deferred rendering blenders (use r_dx11Texture/r_dx11Sampler API)
 list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*_deferred\\.cpp$")
+# Exclude HOM.cpp - hardware occlusion manager conflicts with stub in xrRender_pch.h
+list(FILTER XRRENDER_SOURCES EXCLUDE REGEX ".*/HOM\\.cpp$")
 add_library(xrRender STATIC ${XRRENDER_SOURCES})
 target_compile_definitions(xrRender PRIVATE ECORE_API=)
 # Use COMPILE_FLAGS instead of target_compile_options to avoid CMake issues
