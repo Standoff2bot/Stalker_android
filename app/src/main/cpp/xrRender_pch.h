@@ -352,7 +352,15 @@ namespace xray::render::RENDER_NAMESPACE {
 // Forward declarations for RImplementation subsystems
 namespace xray::render::RENDER_NAMESPACE {
     class CDetailManager;  // Detail geometry (grass, small objects)
-    class CHOM;            // Hardware Occlusion Manager (forward declaration - full definition in HOM.h)
+    
+    // CHOM stub - minimal implementation for compilation (real HOM.cpp will be excluded)
+    class CHOM {
+    public:
+        // Visibility check method (used by DetailManager.cpp:321)
+        bool visible(const vis_data&) const { return true; }  // Always visible stub
+        bool visible(const Fbox3&) const { return true; }
+        bool IsSOccluded(void*, float) const { return false; }
+    };
 
     // Simple profiler timer stub for BasicStats (Begin/End methods)
     struct CStatTimer {
@@ -383,7 +391,7 @@ namespace xray::render::RENDER_NAMESPACE {
 
         // Rendering subsystems (used by various xrRender modules)
         CDetailManager* Details = nullptr;      // Detail geometry manager
-        CHOM* HOM = nullptr;                    // Hardware occlusion manager (pointer!)
+        CHOM HOM;                                // Hardware occlusion manager (object, not pointer!)
 
         // Dynamic lighting system (used by Light_DB.cpp, LightTrack.cpp)
         void* L_Dynamic = nullptr;              // Dynamic lights container
