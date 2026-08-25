@@ -325,6 +325,10 @@ using D3DVERTEXELEMENT9 = VertexElement;
 #include "Layers/xrRender/HWCaps.h"
 
 // Blender CLASS_ID constants (B_DEFAULT, B_SHADOW_WORLD, etc.)
+// Import make_clsid from xray namespace before including Blender_CLSID.h
+namespace xray::render::RENDER_NAMESPACE {
+    using xray::make_clsid;
+}
 #include "Layers/xrRender/Blender_CLSID.h"
 
 // Global hardware object (CHW - hardware abstraction, defined in xrRenderGL)
