@@ -272,12 +272,6 @@ using InputElementDesc = VertexElement;  // Alias for compatibility
 // DirectX texture filter modes (additional)
 #define D3DTEXF_GAUSSIANQUAD        GL_LINEAR  // Gaussian quad filter (fallback to linear)
 
-// Blender class IDs (shader material types)
-#define B_DEFAULT               0
-#define B_PARTICLE              1
-#define B_SHADOW_TEX            2
-#define B_LIGHT                 3
-
 // Render configuration variables (anisotropic filtering level)
 extern int ps_r__tf_Anisotropic;
 
