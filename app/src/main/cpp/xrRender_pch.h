@@ -335,9 +335,6 @@ namespace xray::render::RENDER_NAMESPACE {
         static constexpr u32 IMM_CTX_ID = 0;  // Immediate context ID constant
         CHWCaps Caps;  // Hardware capabilities (needed by Blender_Recorder.cpp)
     };
-    
-    // Forward declaration for light class (used by LightTrack.h)
-    class light;
 }
 
 // Shader resource pointers (ref_shader, ref_geom, ref_constant)
@@ -350,6 +347,15 @@ namespace xray::render::RENDER_NAMESPACE {
 #include "Layers/xrRender/ResourceManager.h"
 
 #include "Layers/xrRender/R_Backend.h"         // CBackend definition (uses CHW::IMM_CTX_ID)
+
+// Visual classes - dxRender_Visual base class (needed by light_smapvis.h - fixes 12 errors)
+#include "Layers/xrRender/FBasicVisual.h"
+
+// Light system - full light class definition (needed by LightTrack.cpp, Light_Package.cpp - fixes 76 errors)
+#include "Layers/xrRender/light.h"
+
+// FSlideWindowItem forward declaration (needed by FTreeVisual.cpp - fixes 4 errors)
+struct FSlideWindowItem;
 
 // Forward declarations for RImplementation subsystems
 namespace xray::render::RENDER_NAMESPACE {
