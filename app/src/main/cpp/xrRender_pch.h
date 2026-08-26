@@ -351,6 +351,9 @@ namespace xray::render::RENDER_NAMESPACE {
 // Visual classes - dxRender_Visual base class (needed by light_smapvis.h - fixes 12 errors)
 #include "Layers/xrRender/FBasicVisual.h"
 
+// R_feedback base class (needed by light_smapvis.h line 5 - fixes 8 errors in Build #224)
+#include "Layers/xrRender/r__dsgraph_structure.h"
+
 // DirectX extensions - Flight structure (needed by light.h line 42 - fixes 20 errors in Build #223)
 #include "Common/_d3d_extensions.h"
 
